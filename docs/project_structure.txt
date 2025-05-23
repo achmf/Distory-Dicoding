@@ -1,0 +1,5100 @@
+--- Folder Structure ---
+.gitignore
+[docs]
+    └── .project_structure_ignore
+package-lock.json
+package.json
+[src]
+    ├── .env
+    ├── index.html
+    ├── [public]
+        ├── favicon.png
+        ├── [images]
+            └── logo.png
+        ├── mainfest.json
+        └── sw.js
+    ├── [scripts]
+        ├── config.js
+        ├── [data]
+            └── api.js
+        ├── index.js
+        ├── [models]
+            ├── story-model.js
+            └── user-model.js
+        ├── [pages]
+            ├── add-story-page.js
+            ├── app.js
+            ├── home-page.js
+            ├── login-page.js
+            ├── register-page.js
+            └── story-page.js
+        ├── [presenters]
+            ├── add-story-presenter.js
+            ├── home-presenter.js
+            ├── login-presenter.js
+            ├── register-presenter.js
+            └── story-presenter.js
+        └── [routes]
+            ├── routes.js
+            └── url-parser.js
+    ├── [styles]
+        ├── coordinates-display.css
+        ├── push-notification-toggle.css
+        ├── sr-only.css
+        └── styles.css
+    └── [utils]
+        └── push-notification.js
+STUDENT.txt
+vite.config.js
+
+--- File Contents ---
+
+--- File: .gitignore ---
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+--- File: docs\.project_structure_ignore ---
+
+
+--- File: package-lock.json ---
+{
+  "name": "starter-project-with-vite",
+  "version": "0.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "starter-project-with-vite",
+      "version": "0.0.0",
+      "dependencies": {
+        "leaflet": "^1.9.4",
+        "sweetalert2": "^11.19.1"
+      },
+      "devDependencies": {
+        "vite": "^6.2.0"
+      }
+    },
+    "node_modules/@esbuild/aix-ppc64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.25.0.tgz",
+      "integrity": "sha512-O7vun9Sf8DFjH2UtqK8Ku3LkquL9SZL8OLY1T5NZkA34+wG3OQF7cl4Ql8vdNzM6fzBbYfLaiRLIOZ+2FOCgBQ==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "aix"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/android-arm": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.25.0.tgz",
+      "integrity": "sha512-PTyWCYYiU0+1eJKmw21lWtC+d08JDZPQ5g+kFyxP0V+es6VPPSUhM6zk8iImp2jbV6GwjX4pap0JFbUQN65X1g==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/android-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.25.0.tgz",
+      "integrity": "sha512-grvv8WncGjDSyUBjN9yHXNt+cq0snxXbDxy5pJtzMKGmmpPxeAmAhWxXI+01lU5rwZomDgD3kJwulEnhTRUd6g==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/android-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.25.0.tgz",
+      "integrity": "sha512-m/ix7SfKG5buCnxasr52+LI78SQ+wgdENi9CqyCXwjVR2X4Jkz+BpC3le3AoBPYTC9NHklwngVXvbJ9/Akhrfg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/darwin-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.25.0.tgz",
+      "integrity": "sha512-mVwdUb5SRkPayVadIOI78K7aAnPamoeFR2bT5nszFUZ9P8UpK4ratOdYbZZXYSqPKMHfS1wdHCJk1P1EZpRdvw==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/darwin-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.25.0.tgz",
+      "integrity": "sha512-DgDaYsPWFTS4S3nWpFcMn/33ZZwAAeAFKNHNa1QN0rI4pUjgqf0f7ONmXf6d22tqTY+H9FNdgeaAa+YIFUn2Rg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/freebsd-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.25.0.tgz",
+      "integrity": "sha512-VN4ocxy6dxefN1MepBx/iD1dH5K8qNtNe227I0mnTRjry8tj5MRk4zprLEdG8WPyAPb93/e4pSgi1SoHdgOa4w==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/freebsd-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.25.0.tgz",
+      "integrity": "sha512-mrSgt7lCh07FY+hDD1TxiTyIHyttn6vnjesnPoVDNmDfOmggTLXRv8Id5fNZey1gl/V2dyVK1VXXqVsQIiAk+A==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-arm": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.25.0.tgz",
+      "integrity": "sha512-vkB3IYj2IDo3g9xX7HqhPYxVkNQe8qTK55fraQyTzTX/fxaDtXiEnavv9geOsonh2Fd2RMB+i5cbhu2zMNWJwg==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.25.0.tgz",
+      "integrity": "sha512-9QAQjTWNDM/Vk2bgBl17yWuZxZNQIF0OUUuPZRKoDtqF2k4EtYbpyiG5/Dk7nqeK6kIJWPYldkOcBqjXjrUlmg==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-ia32": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.25.0.tgz",
+      "integrity": "sha512-43ET5bHbphBegyeqLb7I1eYn2P/JYGNmzzdidq/w0T8E2SsYL1U6un2NFROFRg1JZLTzdCoRomg8Rvf9M6W6Gg==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-loong64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.25.0.tgz",
+      "integrity": "sha512-fC95c/xyNFueMhClxJmeRIj2yrSMdDfmqJnyOY4ZqsALkDrrKJfIg5NTMSzVBr5YW1jf+l7/cndBfP3MSDpoHw==",
+      "cpu": [
+        "loong64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-mips64el": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.25.0.tgz",
+      "integrity": "sha512-nkAMFju7KDW73T1DdH7glcyIptm95a7Le8irTQNO/qtkoyypZAnjchQgooFUDQhNAy4iu08N79W4T4pMBwhPwQ==",
+      "cpu": [
+        "mips64el"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-ppc64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.25.0.tgz",
+      "integrity": "sha512-NhyOejdhRGS8Iwv+KKR2zTq2PpysF9XqY+Zk77vQHqNbo/PwZCzB5/h7VGuREZm1fixhs4Q/qWRSi5zmAiO4Fw==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-riscv64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.25.0.tgz",
+      "integrity": "sha512-5S/rbP5OY+GHLC5qXp1y/Mx//e92L1YDqkiBbO9TQOvuFXM+iDqUNG5XopAnXoRH3FjIUDkeGcY1cgNvnXp/kA==",
+      "cpu": [
+        "riscv64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-s390x": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.25.0.tgz",
+      "integrity": "sha512-XM2BFsEBz0Fw37V0zU4CXfcfuACMrppsMFKdYY2WuTS3yi8O1nFOhil/xhKTmE1nPmVyvQJjJivgDT+xh8pXJA==",
+      "cpu": [
+        "s390x"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/linux-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.25.0.tgz",
+      "integrity": "sha512-9yl91rHw/cpwMCNytUDxwj2XjFpxML0y9HAOH9pNVQDpQrBxHy01Dx+vaMu0N1CKa/RzBD2hB4u//nfc+Sd3Cw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/netbsd-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.25.0.tgz",
+      "integrity": "sha512-RuG4PSMPFfrkH6UwCAqBzauBWTygTvb1nxWasEJooGSJ/NwRw7b2HOwyRTQIU97Hq37l3npXoZGYMy3b3xYvPw==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "netbsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/netbsd-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.25.0.tgz",
+      "integrity": "sha512-jl+qisSB5jk01N5f7sPCsBENCOlPiS/xptD5yxOx2oqQfyourJwIKLRA2yqWdifj3owQZCL2sn6o08dBzZGQzA==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "netbsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/openbsd-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.25.0.tgz",
+      "integrity": "sha512-21sUNbq2r84YE+SJDfaQRvdgznTD8Xc0oc3p3iW/a1EVWeNj/SdUCbm5U0itZPQYRuRTW20fPMWMpcrciH2EJw==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "openbsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/openbsd-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.25.0.tgz",
+      "integrity": "sha512-2gwwriSMPcCFRlPlKx3zLQhfN/2WjJ2NSlg5TKLQOJdV0mSxIcYNTMhk3H3ulL/cak+Xj0lY1Ym9ysDV1igceg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "openbsd"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/sunos-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.25.0.tgz",
+      "integrity": "sha512-bxI7ThgLzPrPz484/S9jLlvUAHYMzy6I0XiU1ZMeAEOBcS0VePBFxh1JjTQt3Xiat5b6Oh4x7UC7IwKQKIJRIg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "sunos"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/win32-arm64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.25.0.tgz",
+      "integrity": "sha512-ZUAc2YK6JW89xTbXvftxdnYy3m4iHIkDtK3CLce8wg8M2L+YZhIvO1DKpxrd0Yr59AeNNkTiic9YLf6FTtXWMw==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/win32-ia32": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.25.0.tgz",
+      "integrity": "sha512-eSNxISBu8XweVEWG31/JzjkIGbGIJN/TrRoiSVZwZ6pkC6VX4Im/WV2cz559/TXLcYbcrDN8JtKgd9DJVIo8GA==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@esbuild/win32-x64": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.25.0.tgz",
+      "integrity": "sha512-ZENoHJBxA20C2zFzh6AI4fT6RraMzjYw4xKWemRTRmRVtN9c5DcH9r/f2ihEkMjOW5eGgrwCslG/+Y/3bL+DHQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@rollup/rollup-android-arm-eabi": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.34.8.tgz",
+      "integrity": "sha512-q217OSE8DTp8AFHuNHXo0Y86e1wtlfVrXiAlwkIvGRQv9zbc6mE3sjIVfwI8sYUyNxwOg0j/Vm1RKM04JcWLJw==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ]
+    },
+    "node_modules/@rollup/rollup-android-arm64": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.34.8.tgz",
+      "integrity": "sha512-Gigjz7mNWaOL9wCggvoK3jEIUUbGul656opstjaUSGC3eT0BM7PofdAJaBfPFWWkXNVAXbaQtC99OCg4sJv70Q==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ]
+    },
+    "node_modules/@rollup/rollup-darwin-arm64": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.34.8.tgz",
+      "integrity": "sha512-02rVdZ5tgdUNRxIUrFdcMBZQoaPMrxtwSb+/hOfBdqkatYHR3lZ2A2EGyHq2sGOd0Owk80oV3snlDASC24He3Q==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@rollup/rollup-darwin-x64": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.34.8.tgz",
+      "integrity": "sha512-qIP/elwR/tq/dYRx3lgwK31jkZvMiD6qUtOycLhTzCvrjbZ3LjQnEM9rNhSGpbLXVJYQ3rq39A6Re0h9tU2ynw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ]
+    },
+    "node_modules/@rollup/rollup-freebsd-arm64": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.34.8.tgz",
+      "integrity": "sha512-IQNVXL9iY6NniYbTaOKdrlVP3XIqazBgJOVkddzJlqnCpRi/yAeSOa8PLcECFSQochzqApIOE1GHNu3pCz+BDA==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ]
+    },
+    "node_modules/@rollup/rollup-freebsd-x64": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-freebsd-x64/-/rollup-freebsd-x64-4.34.8.tgz",
+      "integrity": "sha512-TYXcHghgnCqYFiE3FT5QwXtOZqDj5GmaFNTNt3jNC+vh22dc/ukG2cG+pi75QO4kACohZzidsq7yKTKwq/Jq7Q==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.34.8.tgz",
+      "integrity": "sha512-A4iphFGNkWRd+5m3VIGuqHnG3MVnqKe7Al57u9mwgbyZ2/xF9Jio72MaY7xxh+Y87VAHmGQr73qoKL9HPbXj1g==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.34.8.tgz",
+      "integrity": "sha512-S0lqKLfTm5u+QTxlFiAnb2J/2dgQqRy/XvziPtDd1rKZFXHTyYLoVL58M/XFwDI01AQCDIevGLbQrMAtdyanpA==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm64-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.34.8.tgz",
+      "integrity": "sha512-jpz9YOuPiSkL4G4pqKrus0pn9aYwpImGkosRKwNi+sJSkz+WU3anZe6hi73StLOQdfXYXC7hUfsQlTnjMd3s1A==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-arm64-musl": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.34.8.tgz",
+      "integrity": "sha512-KdSfaROOUJXgTVxJNAZ3KwkRc5nggDk+06P6lgi1HLv1hskgvxHUKZ4xtwHkVYJ1Rep4GNo+uEfycCRRxht7+Q==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-loongarch64-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-loongarch64-gnu/-/rollup-linux-loongarch64-gnu-4.34.8.tgz",
+      "integrity": "sha512-NyF4gcxwkMFRjgXBM6g2lkT58OWztZvw5KkV2K0qqSnUEqCVcqdh2jN4gQrTn/YUpAcNKyFHfoOZEer9nwo6uQ==",
+      "cpu": [
+        "loong64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-powerpc64le-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.34.8.tgz",
+      "integrity": "sha512-LMJc999GkhGvktHU85zNTDImZVUCJ1z/MbAJTnviiWmmjyckP5aQsHtcujMjpNdMZPT2rQEDBlJfubhs3jsMfw==",
+      "cpu": [
+        "ppc64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.34.8.tgz",
+      "integrity": "sha512-xAQCAHPj8nJq1PI3z8CIZzXuXCstquz7cIOL73HHdXiRcKk8Ywwqtx2wrIy23EcTn4aZ2fLJNBB8d0tQENPCmw==",
+      "cpu": [
+        "riscv64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-s390x-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.34.8.tgz",
+      "integrity": "sha512-DdePVk1NDEuc3fOe3dPPTb+rjMtuFw89gw6gVWxQFAuEqqSdDKnrwzZHrUYdac7A7dXl9Q2Vflxpme15gUWQFA==",
+      "cpu": [
+        "s390x"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-x64-gnu": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.34.8.tgz",
+      "integrity": "sha512-8y7ED8gjxITUltTUEJLQdgpbPh1sUQ0kMTmufRF/Ns5tI9TNMNlhWtmPKKHCU0SilX+3MJkZ0zERYYGIVBYHIA==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-linux-x64-musl": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.34.8.tgz",
+      "integrity": "sha512-SCXcP0ZpGFIe7Ge+McxY5zKxiEI5ra+GT3QRxL0pMMtxPfpyLAKleZODi1zdRHkz5/BhueUrYtYVgubqe9JBNQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-arm64-msvc": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.34.8.tgz",
+      "integrity": "sha512-YHYsgzZgFJzTRbth4h7Or0m5O74Yda+hLin0irAIobkLQFRQd1qWmnoVfwmKm9TXIZVAD0nZ+GEb2ICicLyCnQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-ia32-msvc": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.34.8.tgz",
+      "integrity": "sha512-r3NRQrXkHr4uWy5TOjTpTYojR9XmF0j/RYgKCef+Ag46FWUTltm5ziticv8LdNsDMehjJ543x/+TJAek/xBA2w==",
+      "cpu": [
+        "ia32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@rollup/rollup-win32-x64-msvc": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.34.8.tgz",
+      "integrity": "sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ]
+    },
+    "node_modules/@types/estree": {
+      "version": "1.0.6",
+      "resolved": "https://registry.npmjs.org/@types/estree/-/estree-1.0.6.tgz",
+      "integrity": "sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/esbuild": {
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.0.tgz",
+      "integrity": "sha512-BXq5mqc8ltbaN34cDqWuYKyNhX8D/Z0J1xdtdQ8UcIIIyJyz+ZMKUt58tF3SrZ85jcfN/PZYhjR5uDQAYNVbuw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "bin": {
+        "esbuild": "bin/esbuild"
+      },
+      "engines": {
+        "node": ">=18"
+      },
+      "optionalDependencies": {
+        "@esbuild/aix-ppc64": "0.25.0",
+        "@esbuild/android-arm": "0.25.0",
+        "@esbuild/android-arm64": "0.25.0",
+        "@esbuild/android-x64": "0.25.0",
+        "@esbuild/darwin-arm64": "0.25.0",
+        "@esbuild/darwin-x64": "0.25.0",
+        "@esbuild/freebsd-arm64": "0.25.0",
+        "@esbuild/freebsd-x64": "0.25.0",
+        "@esbuild/linux-arm": "0.25.0",
+        "@esbuild/linux-arm64": "0.25.0",
+        "@esbuild/linux-ia32": "0.25.0",
+        "@esbuild/linux-loong64": "0.25.0",
+        "@esbuild/linux-mips64el": "0.25.0",
+        "@esbuild/linux-ppc64": "0.25.0",
+        "@esbuild/linux-riscv64": "0.25.0",
+        "@esbuild/linux-s390x": "0.25.0",
+        "@esbuild/linux-x64": "0.25.0",
+        "@esbuild/netbsd-arm64": "0.25.0",
+        "@esbuild/netbsd-x64": "0.25.0",
+        "@esbuild/openbsd-arm64": "0.25.0",
+        "@esbuild/openbsd-x64": "0.25.0",
+        "@esbuild/sunos-x64": "0.25.0",
+        "@esbuild/win32-arm64": "0.25.0",
+        "@esbuild/win32-ia32": "0.25.0",
+        "@esbuild/win32-x64": "0.25.0"
+      }
+    },
+    "node_modules/fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+      }
+    },
+    "node_modules/leaflet": {
+      "version": "1.9.4",
+      "resolved": "https://registry.npmjs.org/leaflet/-/leaflet-1.9.4.tgz",
+      "integrity": "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA=="
+    },
+    "node_modules/nanoid": {
+      "version": "3.3.8",
+      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.8.tgz",
+      "integrity": "sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "bin": {
+        "nanoid": "bin/nanoid.cjs"
+      },
+      "engines": {
+        "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
+      }
+    },
+    "node_modules/picocolors": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/postcss": {
+      "version": "8.5.3",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.3.tgz",
+      "integrity": "sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/postcss"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "nanoid": "^3.3.8",
+        "picocolors": "^1.1.1",
+        "source-map-js": "^1.2.1"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      }
+    },
+    "node_modules/rollup": {
+      "version": "4.34.8",
+      "resolved": "https://registry.npmjs.org/rollup/-/rollup-4.34.8.tgz",
+      "integrity": "sha512-489gTVMzAYdiZHFVA/ig/iYFllCcWFHMvUHI1rpFmkoUtRlQxqh6/yiNqnYibjMZ2b/+FUQwldG+aLsEt6bglQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@types/estree": "1.0.6"
+      },
+      "bin": {
+        "rollup": "dist/bin/rollup"
+      },
+      "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+      },
+      "optionalDependencies": {
+        "@rollup/rollup-android-arm-eabi": "4.34.8",
+        "@rollup/rollup-android-arm64": "4.34.8",
+        "@rollup/rollup-darwin-arm64": "4.34.8",
+        "@rollup/rollup-darwin-x64": "4.34.8",
+        "@rollup/rollup-freebsd-arm64": "4.34.8",
+        "@rollup/rollup-freebsd-x64": "4.34.8",
+        "@rollup/rollup-linux-arm-gnueabihf": "4.34.8",
+        "@rollup/rollup-linux-arm-musleabihf": "4.34.8",
+        "@rollup/rollup-linux-arm64-gnu": "4.34.8",
+        "@rollup/rollup-linux-arm64-musl": "4.34.8",
+        "@rollup/rollup-linux-loongarch64-gnu": "4.34.8",
+        "@rollup/rollup-linux-powerpc64le-gnu": "4.34.8",
+        "@rollup/rollup-linux-riscv64-gnu": "4.34.8",
+        "@rollup/rollup-linux-s390x-gnu": "4.34.8",
+        "@rollup/rollup-linux-x64-gnu": "4.34.8",
+        "@rollup/rollup-linux-x64-musl": "4.34.8",
+        "@rollup/rollup-win32-arm64-msvc": "4.34.8",
+        "@rollup/rollup-win32-ia32-msvc": "4.34.8",
+        "@rollup/rollup-win32-x64-msvc": "4.34.8",
+        "fsevents": "~2.3.2"
+      }
+    },
+    "node_modules/source-map-js": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+      "dev": true,
+      "license": "BSD-3-Clause",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/sweetalert2": {
+      "version": "11.19.1",
+      "resolved": "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.19.1.tgz",
+      "integrity": "sha512-+8yws3Sc1srAZbrgdhmEIZny1I1UOYhJOIOdtOlv4TYaP5kkwQ9Zm8/BT23Qg+KdByCNOazltxEJAHzXVu8mhA==",
+      "funding": {
+        "type": "individual",
+        "url": "https://github.com/sponsors/limonte"
+      }
+    },
+    "node_modules/vite": {
+      "version": "6.2.0",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-6.2.0.tgz",
+      "integrity": "sha512-7dPxoo+WsT/64rDcwoOjk76XHj+TqNTIvHKcuMQ1k4/SeHDaQt5GFAeLYzrimZrMpn/O6DtdI03WUjdxuPM0oQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "esbuild": "^0.25.0",
+        "postcss": "^8.5.3",
+        "rollup": "^4.30.1"
+      },
+      "bin": {
+        "vite": "bin/vite.js"
+      },
+      "engines": {
+        "node": "^18.0.0 || ^20.0.0 || >=22.0.0"
+      },
+      "funding": {
+        "url": "https://github.com/vitejs/vite?sponsor=1"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.3"
+      },
+      "peerDependencies": {
+        "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0",
+        "jiti": ">=1.21.0",
+        "less": "*",
+        "lightningcss": "^1.21.0",
+        "sass": "*",
+        "sass-embedded": "*",
+        "stylus": "*",
+        "sugarss": "*",
+        "terser": "^5.16.0",
+        "tsx": "^4.8.1",
+        "yaml": "^2.4.2"
+      },
+      "peerDependenciesMeta": {
+        "@types/node": {
+          "optional": true
+        },
+        "jiti": {
+          "optional": true
+        },
+        "less": {
+          "optional": true
+        },
+        "lightningcss": {
+          "optional": true
+        },
+        "sass": {
+          "optional": true
+        },
+        "sass-embedded": {
+          "optional": true
+        },
+        "stylus": {
+          "optional": true
+        },
+        "sugarss": {
+          "optional": true
+        },
+        "terser": {
+          "optional": true
+        },
+        "tsx": {
+          "optional": true
+        },
+        "yaml": {
+          "optional": true
+        }
+      }
+    }
+  }
+}
+
+
+--- File: package.json ---
+{
+  "name": "starter-project-with-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "sweetalert2": "^11.19.1"
+  }
+}
+
+
+--- File: src\.env ---
+VITE_GOOGLE_MAPS_API_KEY=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g
+
+--- File: src\index.html ---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Distory</title>
+
+    <!-- Memastikan CSS dimuat lebih dulu -->
+    <link rel="preload" href="styles/styles.css" as="style">
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="stylesheet" href="styles/coordinates-display.css" />
+    <link rel="stylesheet" href="styles/sr-only.css" />
+    <link rel="stylesheet" href="styles/push-notification-toggle.css" />
+
+    <!-- Memuat JavaScript di bagian bawah untuk mencegah blokir rendering -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g&callback=initMap"
+      async
+      defer
+    ></script>
+  </head>
+  <body>
+    <!-- Skip to Content Button (Initially hidden) -->
+    <button id="skip-to-content" class="skip-to-content sr-only">
+      Skip to Main Content
+    </button>
+
+    <!-- Loading Overlay (Initially hidden) -->
+    <div id="loading-overlay">
+      <div id="loading-spinner"></div>
+    </div>
+
+    <header>
+      <div class="main-header container">
+        <a class="brand-name" href="#/">Distory</a>
+
+        <!-- Navigation Bar for Desktop -->
+        <nav class="navigation-bar">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Home</a></li>
+            <li><a href="#/story">Stories</a></li>
+            <li><a href="#/add-story">Add Story</a></li>
+            <li><a href="#/register" id="register-link">Register</a></li>
+            <li><a href="#/login" id="login-link">Login</a></li>
+          </ul>
+        </nav>
+
+        <!-- Navigation Drawer for Mobile -->
+        <nav id="navigation-drawer" class="navigation-drawer">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Home</a></li>
+            <li><a href="#/story">Stories</a></li>
+            <li><a href="#/add-story">Add Story</a></li>
+            <li><a href="#/register" id="register-drawer-link">Register</a></li>
+            <li><a href="#/login" id="login-drawer-link">Login</a></li>
+          </ul>
+        </nav>
+
+        <!-- Drawer Button (Mobile) -->
+        <button id="drawer-button" class="drawer-button">☰</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content" tabindex="-1"></main>
+
+    <!-- Register Service Worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
+            })
+            .catch((error) => {
+              console.error("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
+    <script type="module" src="scripts/index.js" defer></script>
+  </body>
+</html>
+
+
+--- File: src\public\favicon.png ---
+�PNG
+
+   IHDR   (   (   &�p�    cHRM  z&  ��  �   ��  u0  �`  :�  p��Q<   bKGD ���̿   	pHYs  �  ��o�d   tIME�
+
+���1  �IDATH���MhTg��N�f���Ś��%�o�
+��?�(TJ�q�Mq-R(�	.�łU[hJ;�I�"�$���h���Ž3ss�\p��߻��������9�{��A�s��f�g|�Ga�j��F�uc�v-h�	a�g�!�����$3��3=��d��Sv+�����PA�v?��OZ�N=&�ed��'�yMI�.��4�b�c��ՙ��
+\��r���E�q�I'�pD�~�թ��E!ՀP3�Z�
+�Z�hP��D5�M"v��%u�-�,*�0��L��Vg̊KX��B� k=���Y%�<�s�)N�!ƍ4BK|���#�>���M'T�N�w-���z��^tڝx5`�g3��s�I
+F�o�V̧"mZ2��d��Hc>)d�k���ewΑ�t��x��[��>5�ȒN'Tr����q՞t>�)�&3|�)���h&�Akܳ�Y��=�.�J�`��F��j-���u��X��lT�8�|+4l�b��לЛQg�qL���L����Z7�t�c��lVQw�n����tO��I�S����G��#$�b�R	��l� 1S��&����ncȐ�Կ/^Эj�!x�~O8�f�����"��M��+s�Wis���P���s|�wc���{9�kv�*��sv�I9]`ڰKu���-)?��\pe���_�_���H   %tEXtdate:create 2024-10-28T03:10:10+00:00"�r�   %tEXtdate:modify 2024-10-28T03:10:10+00:00S��   (tEXtdate:timestamp 2024-10-28T03:10:12+00:00�L��   tEXtSoftware www.inkscape.org��<    IEND�B`�
+
+--- File: src\public\images\logo.png ---
+�PNG
+
+   IHDR         ^qq    cHRM  z&  ��  �   ��  u0  �`  :�  p��Q<   bKGD ���̿   	pHYs  �  ��o�d   tIME�
+
+m��R   %tEXtdate:create 2024-10-28T03:10:10+00:00"�r�   %tEXtdate:modify 2024-10-28T03:10:10+00:00S��   (tEXtdate:timestamp 2024-10-28T03:10:18+00:007<��   tEXtSoftware ezgif.com�óX   0tEXtComment PNG edited with https://ezgif.com/resizeX��k  'IDATx���y��U����9�p��PFMQ)'��)Ԯ#Mj�-1��ݨ��յHK��LpB�
+��%2	��Xb22("�9���9���(p������]���{�w=���w�����"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""�~ʼ�r�'��E*��%�)�^Tt�TQ�:��
+s��|����~��7=�IkZъ
+�z/)�mT��*�X�<�3��Kڕ �ӛ�8��h���LX�&0�5�1s �pg��{!�P�sL`�(x/|�ƹ��nB���� ���P�q1����I��(�y�{^zq3�)h�ulc<��{��AK����;��1�o��{���(FS����KN3�M���zָw�t�VF��{ӊ�?tox)��\Ks��� �s3ݻUzc���y�ud�{�Ky,g���U9�x˽K�;�1��ޛ��q%�[\�c|f�K?��ܻS�cE�C~�����eT�U����1��[����7��'X���|�q���ig�u�H��2�{o����tog�R����w�7��6F��<����{+�:�p���7���Ƙ�<d'�xɽ�yu|�u���{�=&�*�&6�6so��=��V��4c���sWz� �r㨎y�XЇg�s�@��D@C��G���� dS��	���H�x����D5���e�ɥޅ'� N�jbM# �g�El���L^�oE=�O��w�	9��x��8��@S��o܎�.�8��XT��]��KNL7:3.���p����Ӏ�� �r��?�WǲgG�&3cLl}A��y�����)l�~����!ޥ&i+'2�~Z�,?�'hR��Ȯ�q���1��MTC2����Z@���ߪ��$��ըG�p�"���	��0�_��'���߈wu`�.��l m'�{Ё���s���f��6�]�]`�>�YNh����Ӧ�ݐzn��!�L.�.N�õ�Z}8�iEo���C\a�r^��wiTӍ7���zp�K3��9<¬��-��r:�w G�B�1$o�g�g,c�>�g�F���j2�w ����|��g؃��ϐV\m7���s �r;W��7��K����`6�Le��z�g�P�;	���?c����Mx �3ԵR_k��Y�r��O[M���,�dZ�v�3��Yʆx�AȌִ��3��*O0�h�r��!ӵ-d"3X�Z�L�͢���}9�cM�'o�C��]���5��R�� �\�3����[C{��4�߭�E?�V;�ʏL�a|Bоj�Z��6��Ix�̞ V����ي��ͻ���r�Y�O�.�m��3/��+��)��:z�ъ�n����K���ʤ�[�q��o��<�{�!י��Xf���&k��9�M͐#Yf�9û�?2G/��|��	��`%�c;C��1}L>8�ػ(�2��j�x��9e�5x�\n����1»�t��;���E@W���׽�Ȥ���b��I���MC�ff�}��5�=��;'��E4�."�¿]���*V�"�T3�`�����e��	�3��?/lK����ߝ���'�r�wa�-���9z�/#, BP���%�T%��%�m�r�Y?��w�3|� �W�����rk\���98p��; ��jF=|e�.����G�w�<�|��лˇ��"V�#o
+�����%4 B0;��[���B_��߸^||E�� tK�ȵ��|���C�w�]+r�{���1��\�O�8t+{�G��	�B ��{����-������7���5��ݍAD��( D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� IXX Ժ=�>>t���ݻ����O����<��\�||e�����;��%4 Bp`x�ڟ�����彿x@��r���g� ��ޅ��= B�"^@�I��6>>t���a?���Ǉ�/��f��Ϥ,���:3x���:���8٬�s G�����+�G�'�^\��u�=?���f�ȟK����?��R�x��Y���/�k(�:p[���Ȍj�+�;�˻�c�K��X�"2�������`^�/�[�Q���6{т��2���w�����u<h�4����jϪ�κ  x����S�"2�7�}=�`%��cm��1xҠ��z��K�B
+��w�҉Wz��fk	��W��T���2�0���8ߤ�:��]Hf�6y��h��r֘�f:����e���x�Ж�F匥�w1����ɛ��c��G�ֳ����̀^�4��B�RvxΨ���&���qtϘ���qF������&;��-l5������0��	R`=w18�/����7yѴ��αlg��-P�$���o:r)��t�O�YZ�Ӥ=����W`�R�f�y���6@�_����fs��|���g!k�`>oִ�5�E�U�J�b"���3ؼ@	Q�;��f��G�������Ldq͖Ѯ��������?:S�[Md ��į����V�o��]���,@�����Wn͐�������d�_�J��4��l.��[V�5Cv�#�?��{�y���o [�ũ��Ō�0��r���q��dVn������n`{�Y�0�^A��SL����\�1�ؽ�z�p�����i�?��]^�j8��g�v�nx��Eo�쪆/Gz��&��]�p��U ,/�ٙ9�ױ�7rC���3ȻĤ-��l��,��6��s����l�E�����|��*�/j��'� x��|�h��Us�G>�^f�.��dD�snm ��'t�W�t���
+N�.5I��2��;�i~,�hZ������+�t�FLV�J��������.��ITv7���X�8�y�'f#�������q]䳨fr>[�x��8�e�E'��y1������
+��!��E���"s#Oq��Pu�y�M� �)4��e�;p����d*(����~��'� �f-g�_FQ��@��a.g<Ch�݂\��P�{��/СܭE3�,��O꼏h�1��{�K���Ϲ����=���9��a%�3��95���_��p��}n5v���{[�U��f7���1�Ӈ����ֽ��s2w{�SY�ޕ�����P{�1ǽ�y[�1�߽�g����5
+L���f�ш�f��KuL���6����v�Pi�7�����}�Ǳ�˼��}5�:V�w�4�&~��-��������B�����}@-�r���֨b$��7���rk��^
+���\�����r/���4�2����0��L�<�����8�{��M������<�`�wv�_9�9` r^G�l�Y&�3�u���iȩd �"�t^z�2��y�*����9�>��']}��c>�����M8Zs*}�EOz$z��2���f2+���{�Љ�����<��G[�b�buB�LD[ZRAZz��n�TQ�ZV�29"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""%��{�iC:Ӗ
+ZPA[��D��**YO5o1���y/(�Ft�'miAK�Ђ&�����l��*ֱ��l�^P}�����)�����h�0�L�ŜEAc�g }�MWy/�M�ט�l&3��ދ��7 �9�����QV�c2O�0���+3��4�^H�lg&�L�x@O.c]��a�L������'�8�O3PѾsy��Y⽌b+c�)h|���9�{��E�r'��;Wc;�s���O9�����RU�� ����0�m�+�1���Wg3׽ե:6�*�7�}t�>j�;U�c
+Gzo`L���R+潍�T9W���C�=�1�V�C�����|�?p��v�A?^t�L>�r.��Lk���{[�4�s�����J��w%Oc4ͼ���Gyս�yu����ƾ���#c�yo��k�p��,��78������� ��U��6�y,r�+q�ݻ�߱�+�oa��3��k����\�Ӽ�v�A<Ak�&�X9�(cr܃�
+��<�eq�.TpSY�r�O2&���W�iT�T�C�	�2���˖w4�B�Ȫ�wch�]|N���� ?��,�h�e}Q�y�i�]x2���cM�Z���!�-���T��.9)�\��q���A<����dΠ�(Gj�t�.79[8��ǘ��#@g���?8�BS�p�2��D�bԐ���~b� h���Q��ȮN�/,�~�k��w��ڟ.<b?���[��p�G�f�#�czfNAN�ge=�e ��O,��wOԟ7`G{���u����rÙ~����O3 ��_���Y[n�����W���͐=�C_�E��si�]^�
+�=9��ov{��Ԑ8�J��2�o��wqB��
+vZ}�V?Ɉ�\9�7�z& �E����~\���o�(�a���"	�]˽���jZ:5C����R���?C�0�n2� h�Wݚ!�u���3~K��˔즲�K�Ӑ���@֊Oz$�8��Y� ���SՇcg�P��ȜO[M~��,0���r^fi���	ҝ��o�=�k��̩ƫ��%�����f�t�H�����iо����K\����s.��^[�Y�t��p]빍���.���0�g��+�<�v�cV�˜���:q;�ͺy�Ѫ�i��*���_}@��+ͺy�w9o�dT�v�+��{r��S��F+z�h=�����h�cF�|=,?eR̦켡qwϛ���*r��2Y�h��;���ч�ýK�ˠ���.#S��AW���t�d���l��ʌkL�z�w K
+��w׎e}�xW�=�u<�����n��q�E@�|��A:;�`�WQIg�ffPS�wv�wpBp�3y��,���������Q�w������k�2�7������F��aM�'�C�7=G�/"�T���ǿݪ��37�2�=��z���}U�=ɗ��~��E�@�������%�փ��oA��B�Ƙu#Ʊ5p���	��_>^@�M��m��C�w/�u#*�8C�� ���f��cX8C艷��;�H�++U�`pbuX �^hax�ڟ��	}��^���� o��kk� ��ϻ��{ �<���r�:��oᵿqy�/��o&���R]��C�����+�?���ŞE� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I�@$a
+ ��) D� I� ��_�.@�., 6��w��,����M{�G���������	/ ��>�����ϻ6���B�*����ȵCСO0��ޅ�'t	��'H��r�gh�o\}��`C��O/ �N�!tB߉V�ȡF�8C�� ��~<���[>��e�3��oxyv6�gߟ� �|���Kȩ�|<p�El���g�<{�/�����%�N!p���w����k��W�W�)�Ffԑ����w�K(��"2�[�;{��:�^�rZz73�ʘ��7�� X\F-��Ȝ��0��O��������A_'x�A!o�˻�L)�w]-p��Z>n���{�4c��+��2 �l�y��ޅdF�0��\�մd��Z�ڻ�r�&;|�w! =MJ)���KɄ������h��z~�_~ e|��~n��w1o[n�����
+h�Xe���0Z��V4��y���QL6��x�bv�լ�[�-''��\��NVQa��cWU�9���R�3����������Bq��aܬ�Lc6��f���YӔt�;'p�q���0��fs���j����jjLgΚrZӚC9�����DG��Y��Di�O�o��rd7�Y�`e�w�^�VH}+�d8���S���=VY�h�:�B껋Z��V��dK���Y��������[�g��wI�����櫧��˜��kV��Oy%�2��k �q�O/��-Q~^u�wY��b7��?�~�6�f���`e�Y�0ٻ0�u��rk�����[�E�v2�+tq��"/ZNgw���YR�^H=�E;y���.N���	-N��-j3dw�p*��Ԝ9�]b�j�k�+�wY��:�q���f3_���M�.1q?�~��}�?s����*���i�G��L�T.�Hk=� >�34.RCdgc��Gi��l\�"9�9���Z���-�U����0�('c�1�a�7-�U�~����?v�Bw>�!������m�e.I���ͨ8����x��=j;dg��8��x�,�|������oǚ:F �1���PĆ�{j�4�����Z��.<c�<�w�۵����Z";���SC>��iF���$�ļC��;7� ��o�l�Sn?Ú�z������ҽ�Fs�0���Ʈ��3�wx��%�5�<n-�/[��F��XN_���P�މ|�Z���\èvof��D:xo�;z�w�n�o���=�����ilgD��6e�{O�5����1CZr��MR9�{;��S��ޙ|�-���M�l��%����a$-�7�h�Hj�;T�c2}�72�F\gt_�4Ǔ�?��$}0Vp���׎�uou�i�޺����p�V�7���ޛW,m��>1~�Q���e��2��{�Jg,�4�޴bk�`�i$�3^�̿��g�&�p�`��fb��W~��r�PsM]W�E���L#�%��k�9\�@:z/$s62�Gy�J�d�\�f�� N�m���l;����Ld��RL�a �K�L���a/1�����W� �iO/z҅�TP�Dl��Jֳ���cQ�o�Ҍ��mhI*�x\�@�,d�D�h�����������������������������������������������������������������]��f7�    IEND�B`�
+
+--- File: src\public\mainfest.json ---
+{
+  "name": "Distory",
+  "short_name": "Distory",
+  "description": "A story posting app with location integration",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3f51b5",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
+
+--- File: src\public\sw.js ---
+// This ensures the service worker activates immediately
+self.addEventListener("install", (event) => {
+  console.log("Service Worker: Installing...");
+  self.skipWaiting(); // Force the waiting service worker to become the active service worker
+});
+
+// This ensures the service worker takes control immediately
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker: Activating...");
+  event.waitUntil(clients.claim()); // Take control of all clients as soon as the service worker activates
+});
+
+// Handle push events (notifications)
+self.addEventListener("push", (event) => {
+  console.log("Service Worker: Push received");
+  console.log("Push data:", event.data?.text());
+
+  let notificationData = {};
+
+  try {
+    if (event.data) {
+      notificationData = event.data.json();
+    }
+  } catch (error) {
+    console.error("Error parsing push data:", error);
+    notificationData = {
+      title: "New Distory Notification",
+      options: {
+        body: "You have a new notification",
+        icon: "/favicon.png",
+      },
+    };
+  }
+
+  const title = notificationData.title || "Distory Notification";
+  const options = {
+    body: "You have a new notification",
+    icon: "/favicon.png",
+    badge: "/favicon.png",
+    ...notificationData.options,
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Handle notification click
+self.addEventListener("notificationclick", (event) => {
+  console.log("Service Worker: Notification click received");
+
+  event.notification.close();
+
+  let url = "/";
+
+  if (event.notification.data && event.notification.data.url) {
+    url = event.notification.data.url;
+  }
+
+  if (event.action === "view") {
+    url = `/#/story`;
+  }
+
+  const baseUrl = self.location.origin;
+  const fullUrl = new URL(url.startsWith("/") ? url : `/${url}`, baseUrl).href;
+
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((windowClients) => {
+      for (let client of windowClients) {
+        if (client.url === fullUrl && "focus" in client) {
+          return client.focus();
+        }
+      }
+
+      if (clients.openWindow) {
+        return clients.openWindow(fullUrl);
+      }
+    })
+  );
+});
+
+// Cache static assets for offline use
+const CACHE_NAME = 'distory-cache-v1';
+const staticAssets = [
+  '/',
+  '/index.html',
+  '/styles/styles.css',  // Cache the main styles
+  '/styles/coordinates-display.css',  // Cache the secondary styles
+  '/styles/sr-only.css',  // Cache the sr-only styles
+  '/styles/push-notification-toggle.css',  // Cache the notification styles
+  '/scripts/index.js',  // Cache the main JS
+  '/scripts/app.js',  // Cache app-specific JS
+  '/images/favicon.png',  // Cache the favicon
+  '/images/logo.png',  // Cache the logo (add if needed)
+  '/manifest.json',  // Cache manifest
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(staticAssets);  // Cache the defined assets
+    })
+  );
+});
+
+// Skip Google Maps API requests from being cached
+self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('maps.googleapis.com')) {
+    // Skip caching Google Maps API requests
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || fetch(event.request);  // Serve cached content if available, else fetch from network
+    })
+  );
+});
+
+// Clean up old caches when a new service worker is activated
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME];  // Only keep the latest cache
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);  // Delete old caches
+          }
+        })
+      );
+    })
+  );
+});
+
+
+--- File: src\scripts\config.js ---
+const CONFIG = {
+  BASE_URL: 'https://story-api.dicoding.dev/v1',  // The correct API URL
+  get TOKEN() {
+    // Retrieve token from localStorage, if available
+    const token = localStorage.getItem('token');
+    console.log("Retrieved token:", token);  // Log token for debugging
+    return token;
+  },
+};
+
+export default CONFIG;
+
+
+--- File: src\scripts\data\api.js ---
+// This file is kept for backward compatibility
+// All API calls should now go through the Model classes
+
+import CONFIG from "../config"
+
+const ENDPOINTS = {
+  STORIES: `${CONFIG.BASE_URL}/stories`, // Endpoint for fetching stories
+  ADD_STORY: `${CONFIG.BASE_URL}/stories/add`, // Endpoint for adding a new story
+}
+
+// Fetch all stories with optional pagination and location filter
+export async function getAllStories(page = 1, size = 10, location = 0) {
+  try {
+    const url = new URL(ENDPOINTS.STORIES)
+    url.searchParams.append("page", page) // Add page parameter
+    url.searchParams.append("size", size) // Add size parameter
+    url.searchParams.append("location", location) // Add location filter (1 or 0)
+
+    const token = localStorage.getItem("token") // Get token directly from localStorage
+    console.log("Using token:", token) // Log the token for debugging
+
+    if (!token) {
+      throw new Error("Authentication required. Please login first.")
+    }
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Use token from localStorage
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Failed to fetch stories")
+    }
+
+    const data = await response.json()
+
+    if (data.error) {
+      throw new Error(data.message)
+    }
+
+    return data.listStory // Return the list of stories
+  } catch (error) {
+    console.error("Error fetching stories:", error)
+    throw error // Rethrow the error to be handled by the caller
+  }
+}
+
+// Fetch single story details by ID
+export async function getStoryDetails(storyId, token) {
+  try {
+    const response = await fetch(`${CONFIG.BASE_URL}/stories/${storyId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // Include token for authenticated requests
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Failed to fetch story details")
+    }
+
+    const data = await response.json()
+
+    if (data.error) {
+      throw new Error(data.message)
+    }
+
+    return data.story // Return the story details
+  } catch (error) {
+    console.error("Error fetching story details:", error)
+    throw error // Rethrow the error to be handled by the caller
+  }
+}
+
+// Add a new story to the API
+export async function addStory(storyData) {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("Authentication required. Please login first.")
+    }
+
+    const response = await fetch(ENDPOINTS.STORIES, {
+      // Use the correct endpoint
+      method: "POST", // Add new story with a POST request
+      headers: {
+        Authorization: `Bearer ${token}`, // Use token from localStorage
+      },
+      body: storyData, // Send the FormData directly (don't stringify)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Failed to add story")
+    }
+
+    return await response.json() // Return the response from the API
+  } catch (error) {
+    console.error("Error adding story:", error)
+    throw error // Rethrow the error to be handled by the caller
+  }
+}
+
+
+--- File: src\scripts\index.js ---
+import "../styles/styles.css"
+import "../styles/coordinates-display.css"
+import App from "./pages/app"
+import PushNotification from "../utils/push-notification"
+import Swal from "sweetalert2"
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const app = new App({
+    content: document.querySelector("#main-content"),
+    drawerButton: document.querySelector("#drawer-button"),
+    navigationDrawer: document.querySelector("#navigation-drawer"),
+  })
+
+  // Register service worker for push notifications
+  if (PushNotification.isSupported()) {
+    try {
+      await PushNotification.registerServiceWorker()
+      console.log("Service worker registered for push notifications")
+
+      // Check if user is logged in
+      const token = localStorage.getItem("token")
+
+      // Only proceed with push notification setup if user is logged in
+      if (token) {
+        // Check if notifications are already active (permission granted AND subscribed)
+        const isNotificationActive = await PushNotification.isNotificationActive()
+
+        // Only show the prompt if notifications are not already active
+        if (!isNotificationActive) {
+          // Add a slight delay to ensure the page is fully loaded
+          setTimeout(() => {
+            // Use a very non-intrusive toast notification
+            Swal.fire({
+              title: "Enable Notifications?",
+              text: "Get notified when new stories are published",
+              icon: "question",
+              toast: true,
+              position: "bottom-end",
+              showConfirmButton: true,
+              showCancelButton: true,
+              confirmButtonText: "Enable",
+              cancelButtonText: "Later",
+              confirmButtonColor: "#5865f2",
+              cancelButtonColor: "#6c757d",
+              timer: 8000, // Auto-close after 8 seconds
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener("mouseenter", Swal.stopTimer)
+                toast.addEventListener("mouseleave", Swal.resumeTimer)
+              },
+            }).then((result) => {
+              if (result.isConfirmed) {
+                PushNotification.requestPermissionAndSubscribe().then((subscribeResult) => {
+                  if (subscribeResult.success) {
+                    // Mark that we've shown the prompt
+                    PushNotification.setPromptShown()
+
+                    Swal.fire({
+                      title: "Notifications Enabled!",
+                      text: "You'll be notified when new stories are published",
+                      icon: "success",
+                      toast: true,
+                      position: "bottom-end",
+                      showConfirmButton: false,
+                      timer: 3000,
+                      timerProgressBar: true,
+                    })
+                  } else {
+                    // Show a more helpful error message
+                    Swal.fire({
+                      title: "Couldn't Enable Notifications",
+                      text: subscribeResult.message,
+                      icon: "error",
+                      toast: true,
+                      position: "bottom-end",
+                      showConfirmButton: true,
+                      timer: 5000,
+                      timerProgressBar: true,
+                    })
+                  }
+                })
+              } else {
+                // Mark that we've shown the prompt even if the user declined
+                PushNotification.setPromptShown()
+              }
+            })
+          }, 2500) // Slightly longer delay to ensure the page is loaded
+        } else {
+          console.log("Notifications are already active, not showing prompt")
+        }
+      }
+    } catch (error) {
+      // Just log the error but don't bother the user
+      console.error("Failed to register service worker for push notifications", error)
+    }
+  }
+
+  // Check if the enableNotificationsButton exists before adding event listener
+  const enableNotificationsButton = document.getElementById("enableNotifications")
+  if (enableNotificationsButton) {
+    enableNotificationsButton.addEventListener("click", async () => {
+      try {
+        const result = await PushNotification.requestPermissionAndSubscribe()
+        if (result.success) {
+          Swal.fire({
+            title: "Notifications Enabled!",
+            text: "You'll be notified when new stories are published",
+            icon: "success",
+            toast: true,
+            position: "bottom-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          })
+        } else {
+          Swal.fire({
+            title: "Couldn't Enable Notifications",
+            text: result.message,
+            icon: "error",
+            toast: true,
+            position: "bottom-end",
+            showConfirmButton: true,
+            timer: 5000,
+            timerProgressBar: true,
+          })
+        }
+      } catch (error) {
+        console.error("Error enabling notifications:", error)
+        Swal.fire({
+          title: "Something Went Wrong",
+          text: "Please try again later",
+          icon: "error",
+          toast: true,
+          position: "bottom-end",
+          showConfirmButton: true,
+          timer: 5000,
+          timerProgressBar: true,
+        })
+      }
+    })
+  }
+
+  const skipButton = document.getElementById("skip-to-content")
+
+  // Make the "Skip to Content" button the first focusable element
+  skipButton.setAttribute("tabindex", "1")
+
+  // Set a lower tabindex on the brand link to ensure it comes after the skip button
+  const brandLink = document.querySelector(".brand-name")
+  brandLink.setAttribute("tabindex", "2")
+
+  // Listen for the Tab key to show the button
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Tab" && !event.shiftKey && document.activeElement === document.body) {
+      event.preventDefault() // Prevent default tab behavior
+      skipButton.classList.remove("sr-only") // Show the button
+      skipButton.focus() // Focus on the skip button
+    }
+  })
+
+  // Hide the skip button when it loses focus (unless focus moves to main content)
+  skipButton.addEventListener("blur", () => {
+    // Only hide if not moving focus to main content
+    if (document.activeElement.id !== "main-content") {
+      skipButton.classList.add("sr-only")
+    }
+  })
+
+  // When the button is clicked, focus on the main content
+  skipButton.addEventListener("click", () => {
+    document.getElementById("main-content").focus()
+  })
+
+  // Hide the skip to content button if the user uses the mouse
+  document.addEventListener("mousedown", () => {
+    skipButton.classList.add("sr-only")
+  })
+
+  // Function to update navigation visibility based on authentication status
+  function updateNavigationVisibility(isAuthenticated) {
+    const loginLink = document.querySelector('a[href="#/login"]')
+    const registerLink = document.querySelector('a[href="#/register"]')
+    const loginDrawerLink = document.querySelector('a[href="#/login"]')
+    const registerDrawerLink = document.querySelector('a[href="#/register"]')
+    const storiesLink = document.querySelector('a[href="#/story"]') // Select the Stories link
+
+    if (isAuthenticated) {
+      if (loginLink) loginLink.style.display = "none"
+      if (registerLink) registerLink.style.display = "none"
+      if (loginDrawerLink) loginDrawerLink.style.display = "none"
+      if (registerDrawerLink) registerDrawerLink.style.display = "none"
+      if (storiesLink) storiesLink.style.display = "block" // Show Stories if logged in
+    } else {
+      if (loginLink) loginLink.style.display = "block"
+      if (registerLink) registerLink.style.display = "block"
+      if (loginDrawerLink) loginDrawerLink.style.display = "block"
+      if (registerDrawerLink) registerDrawerLink.style.display = "block"
+      if (storiesLink) storiesLink.style.display = "none" // Hide Stories if not logged in
+    }
+  }
+
+  // Function to check if current route is accessible without authentication
+  function isPublicRoute() {
+    return (
+      window.location.hash === "#/login" ||
+      window.location.hash === "#/register" ||
+      window.location.hash === "#/add-story" ||
+      window.location.hash === "#/"
+    )
+  }
+
+  // Check if the user is authenticated before rendering the page
+  const token = localStorage.getItem("token")
+
+  // Initial navigation update and page rendering
+  updateNavigationVisibility(!!token)
+
+  // Allow guest access to HomePage, AddStoryPage, and other public pages
+  if (!token && !isPublicRoute()) {
+    // Redirect to login page if the user is not authenticated and not accessing allowed pages
+    window.location.hash = "#/login"
+  } else {
+    await app.renderPage()
+  }
+
+  // Handle route changes
+  window.addEventListener("hashchange", async () => {
+    const token = localStorage.getItem("token")
+
+    // Update navigation visibility
+    updateNavigationVisibility(!!token)
+
+    // Check route access
+    if (!token && !isPublicRoute()) {
+      // Redirect to login page if the user is not authenticated and not accessing allowed pages
+      window.location.hash = "#/login"
+    } else {
+      await app.renderPage()
+    }
+  })
+})
+
+
+--- File: src\scripts\models\story-model.js ---
+import CONFIG from "../config"
+import PushNotification from "../../utils/push-notification"
+
+class StoryModel {
+  constructor() {
+    this.baseUrl = CONFIG.BASE_URL
+    this.token = localStorage.getItem("token")
+  }
+
+  async getAllStories(page = 1, size = 10, location = 0) {
+    try {
+      const url = new URL(`${this.baseUrl}/stories`)
+      url.searchParams.append("page", page)
+      url.searchParams.append("size", size)
+      url.searchParams.append("location", location)
+
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("Authentication required. Please login first.")
+      }
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to fetch stories")
+      }
+
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.message)
+      }
+
+      return data.listStory
+    } catch (error) {
+      console.error("Error fetching stories:", error)
+      throw error
+    }
+  }
+
+  async getStoryDetails(storyId) {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("Authentication required. Please login first.")
+      }
+
+      const response = await fetch(`${this.baseUrl}/stories/${storyId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to fetch story details")
+      }
+
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.message)
+      }
+
+      return data.story
+    } catch (error) {
+      console.error("Error fetching story details:", error)
+      throw error
+    }
+  }
+
+  async addStory(storyData) {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("Authentication required. Please login first.")
+      }
+
+      const response = await fetch(`${this.baseUrl}/stories`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: storyData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to add story")
+      }
+
+      const responseData = await response.json()
+
+      // If the story was added successfully, show a notification
+      if (!responseData.error) {
+        // Create a story object with the data we have
+        const storyObj = {
+          id: responseData.id || "new-story",
+          name: "Your Story", // Since it's the user's own story
+          description: storyData.get("description"),
+          photoUrl: null, // We don't have the URL yet
+        }
+
+        // Try to get the user's name from localStorage if available
+        const userData = localStorage.getItem("user_data")
+        if (userData) {
+          try {
+            const parsedUserData = JSON.parse(userData)
+            if (parsedUserData.name) {
+              storyObj.name = parsedUserData.name
+            }
+          } catch (e) {
+            console.error("Error parsing user data:", e)
+          }
+        }
+
+        // Show a notification for the new story
+        this.notifyStoryPublished(storyObj)
+      }
+
+      return responseData
+    } catch (error) {
+      console.error("Error adding story:", error)
+      throw error
+    }
+  }
+
+  // Method to notify that a story has been published
+  async notifyStoryPublished(storyData) {
+    try {
+      // First check if notifications are enabled
+      const isNotificationActive = await PushNotification.isNotificationActive()
+
+      if (isNotificationActive) {
+        // Show a local notification
+        await PushNotification.notifyNewStory(storyData)
+
+        // If we have a server endpoint for sending push notifications to subscribers
+        // we would call it here
+        // await this.sendPushNotificationToSubscribers(storyData);
+      }
+    } catch (error) {
+      console.error("Error sending story notification:", error)
+      // Don't throw the error - notifications are non-critical
+    }
+  }
+
+  // Method to send push notifications to subscribers (would be implemented on the server)
+  async sendPushNotificationToSubscribers(storyData) {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        return // Silently fail if not logged in
+      }
+
+      // This would call your server endpoint that handles sending push notifications
+      const response = await fetch(`${this.baseUrl}/notifications/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          storyId: storyData.id,
+          title: `New Story from ${storyData.name}`,
+          body: storyData.description,
+          imageUrl: storyData.photoUrl,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error("Error sending push notifications:", errorData)
+      }
+    } catch (error) {
+      console.error("Error sending push notifications:", error)
+    }
+  }
+
+  isLoggedIn() {
+    return !!localStorage.getItem("token")
+  }
+}
+
+export default StoryModel
+
+
+--- File: src\scripts\models\user-model.js ---
+import CONFIG from "../config"
+
+class UserModel {
+  async login(email, password) {
+    try {
+      const response = await fetch(`${CONFIG.BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const responseData = await response.json()
+
+      if (!response.ok || responseData.error) {
+        return null
+      }
+
+      return responseData
+    } catch (error) {
+      console.error("Error logging in:", error)
+      return null
+    }
+  }
+
+  async register(name, email, password) {
+    try {
+      const response = await fetch(`${CONFIG.BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to register")
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error("Error registering user:", error)
+      return null
+    }
+  }
+
+  saveUserData(token, name) {
+    localStorage.setItem("token", token)
+    localStorage.setItem("userName", name)
+  }
+
+  getUserData() {
+    return {
+      token: localStorage.getItem("token"),
+      userName: localStorage.getItem("userName"),
+    }
+  }
+
+  logout() {
+    localStorage.removeItem("token")
+    localStorage.removeItem("userName")
+  }
+
+  isLoggedIn() {
+    return !!localStorage.getItem("token")
+  }
+}
+
+export default UserModel
+
+
+--- File: src\scripts\pages\add-story-page.js ---
+import Swal from "sweetalert2"
+import PushNotification from "../../utils/push-notification"
+
+export default class AddStoryPage {
+  constructor() {
+    this.presenter = null
+    this.capturedImage = null
+    this.currentStream = null
+    this.imageSource = null // 'camera' or 'upload'
+    this.notificationEnabled = false // Track if notifications are enabled
+  }
+
+  setPresenter(presenter) {
+    this.presenter = presenter
+  }
+
+  async render() {
+    // Check if push notifications are supported
+    const notificationsSupported = PushNotification.isSupported()
+    const isSubscribed = await PushNotification.isSubscribed()
+    this.notificationEnabled = isSubscribed
+
+    return `
+      <section class="container">
+        <h1>Share Your Story</h1>
+        <form id="story-form">
+          <label for="story-text">Story Content:</label>
+          <textarea id="story-text" name="story-text" rows="4" required></textarea>
+
+          <!-- Image Selection Section -->
+          <div class="image-selection">
+            <label>Choose Image Source:</label>
+            <div class="image-source-buttons">
+              <button type="button" id="camera-btn" class="source-btn">
+                <i class="fas fa-camera"></i> Take Photo
+              </button>
+              <button type="button" id="upload-btn" class="source-btn">
+                <i class="fas fa-upload"></i> Upload Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Image Preview Section -->
+          <div id="image-preview-container" style="display: none;">
+            <h3>Image Preview</h3>
+            <div id="image-preview"></div>
+            <div class="image-preview-controls">
+              <button type="button" id="retake-photo-btn" class="secondary-btn">Retake Photo</button>
+              <button type="button" id="change-image-btn" class="secondary-btn">Change Image</button>
+            </div>
+          </div>
+
+          <!-- Camera Section -->
+          <div id="camera-section" style="display: none;">
+            <div class="camera-container">
+              <video id="camera-stream" autoplay playsinline></video>
+              <div class="camera-controls">
+                <button type="button" id="take-photo-btn" class="primary-btn">Capture Photo</button>
+                <button type="button" id="cancel-camera-btn" class="secondary-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Upload Section -->
+          <div id="upload-section" style="display: none;">
+            <label for="story-image">Select an Image:</label>
+            <input type="file" id="story-image" name="story-image" accept="image/*">
+          </div>
+
+          <label for="story-location">Story Location:</label>
+          <p class="help-text">Click on the map to set your story's location</p>
+          
+          <!-- Coordinates Display -->
+          <div id="coordinates-display" class="coordinates-display" aria-live="polite">
+            <p>No location selected yet. Click on the map to set a location.</p>
+          </div>
+          
+          <div id="story-location" class="map-container"></div>
+
+          <!-- Hidden fields for latitude and longitude -->
+          <input type="hidden" id="lat" name="lat" />
+          <input type="hidden" id="lon" name="lon" />
+
+          <div class="form-actions">
+            ${
+              notificationsSupported
+                ? `
+            <!-- Push Notification Toggle - Moved to a better position -->
+            <div class="notification-toggle" style="margin-bottom: 20px; display: flex; align-items: center; background-color: #f8f9fa; padding: 12px; border-radius: 8px;">
+              <input type="checkbox" id="push-notification-toggle" ${this.notificationEnabled ? "checked" : ""} style="margin-right: 10px; transform: scale(1.2);">
+              <label for="push-notification-toggle" style="font-weight: 500; color: #333;">Receive push notifications when your story is published</label>
+            </div>
+            `
+                : ""
+            }
+            
+            <button type="submit" id="submit-btn" class="primary-btn">Submit Story</button>
+          </div>
+        </form>
+      </section>
+    `
+  }
+
+  async afterRender() {
+    this.initializeMap() // Initialize Google Map
+    this.setupEventListeners() // Set up event listeners
+
+    // Set up notification toggle if supported
+    const notificationToggle = document.getElementById("push-notification-toggle")
+    if (notificationToggle) {
+      notificationToggle.addEventListener("change", async (event) => {
+        if (event.target.checked) {
+          const result = await PushNotification.requestPermissionAndSubscribe()
+          if (result.success) {
+            this.notificationEnabled = true
+            PushNotification.setNotificationPreference(true)
+            PushNotification.setPromptShown() // Mark that we've shown the prompt
+            Swal.fire({
+              title: "Notifications Enabled!",
+              text: "You will now receive notifications when your stories are published.",
+              icon: "success",
+              background: "#121212",
+              color: "#e0e0e0",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#5865f2",
+            })
+          } else {
+            event.target.checked = false
+            PushNotification.setNotificationPreference(false)
+            Swal.fire({
+              title: "Notification Error",
+              text: result.message,
+              icon: "error",
+              background: "#121212",
+              color: "#e0e0e0",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#f04747",
+            })
+          }
+        } else {
+          const result = await PushNotification.unsubscribe()
+          if (result.success) {
+            this.notificationEnabled = false
+            PushNotification.setNotificationPreference(false)
+            Swal.fire({
+              title: "Notifications Disabled",
+              text: "You will no longer receive story notifications.",
+              icon: "info",
+              background: "#121212",
+              color: "#e0e0e0",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#5865f2",
+            })
+          } else {
+            event.target.checked = true
+            Swal.fire({
+              title: "Error",
+              text: "Failed to disable notifications. Please try again.",
+              icon: "error",
+              background: "#121212",
+              color: "#e0e0e0",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#f04747",
+            })
+          }
+        }
+      })
+    }
+
+    // Add event listener for page navigation
+    window.addEventListener("hashchange", this.cleanup.bind(this))
+  }
+
+  // Cleanup method to stop camera and release resources
+  cleanup() {
+    console.log("AddStoryPage cleanup: Stopping camera stream")
+    this.stopCameraStream()
+
+    // Remove the hashchange event listener to prevent memory leaks
+    window.removeEventListener("hashchange", this.cleanup.bind(this))
+  }
+
+  initializeMap() {
+    const mapContainer = document.getElementById("story-location")
+    const coordinatesDisplay = document.getElementById("coordinates-display")
+
+    if (mapContainer) {
+      const map = new google.maps.Map(mapContainer, {
+        center: { lat: -6.2, lng: 106.816666 }, // Default location (Jakarta)
+        zoom: 13,
+      })
+
+      const marker = new google.maps.Marker({
+        map: map,
+        title: "Click to select story location",
+      })
+
+      google.maps.event.addListener(map, "click", (event) => {
+        const lat = event.latLng.lat()
+        const lon = event.latLng.lng()
+        marker.setPosition(event.latLng)
+        document.getElementById("lat").value = lat
+        document.getElementById("lon").value = lon
+
+        // Update the coordinates display with formatted values
+        this.updateCoordinatesDisplay(lat, lon)
+      })
+    }
+  }
+
+  // New method to update the coordinates display
+  updateCoordinatesDisplay(lat, lon) {
+    const coordinatesDisplay = document.getElementById("coordinates-display")
+
+    if (coordinatesDisplay) {
+      // Format coordinates to 6 decimal places for precision
+      const formattedLat = lat.toFixed(6)
+      const formattedLon = lon.toFixed(6)
+
+      // Convert decimal coordinates to degrees, minutes, seconds format
+      const latDMS = this.decimalToDMS(lat, "lat")
+      const lonDMS = this.decimalToDMS(lon, "lon")
+
+      coordinatesDisplay.innerHTML = `
+        <div class="coordinates-info">
+          <h4>Selected Location:</h4>
+          <p><strong>Decimal:</strong> ${formattedLat}, ${formattedLon}</p>
+          <p><strong>DMS:</strong> ${latDMS}, ${lonDMS}</p>
+        </div>
+      `
+
+      // Add a visual indicator that the location has been selected
+      coordinatesDisplay.classList.add("location-selected")
+    }
+  }
+
+  // Helper method to convert decimal coordinates to degrees, minutes, seconds format
+  decimalToDMS(coordinate, type) {
+    const absolute = Math.abs(coordinate)
+    const degrees = Math.floor(absolute)
+    const minutesNotTruncated = (absolute - degrees) * 60
+    const minutes = Math.floor(minutesNotTruncated)
+    const seconds = Math.floor((minutesNotTruncated - minutes) * 60)
+
+    const direction = type === "lat" ? (coordinate >= 0 ? "N" : "S") : coordinate >= 0 ? "E" : "W"
+
+    return `${degrees}° ${minutes}' ${seconds}" ${direction}`
+  }
+
+  setupEventListeners() {
+    document.getElementById("camera-btn").addEventListener("click", () => this.activateCamera())
+    document.getElementById("upload-btn").addEventListener("click", () => this.activateFileUpload())
+    document.getElementById("take-photo-btn").addEventListener("click", () => this.takePhoto())
+    document.getElementById("cancel-camera-btn").addEventListener("click", () => this.cancelCamera())
+    document.getElementById("retake-photo-btn").addEventListener("click", () => this.retakePhoto())
+    document.getElementById("change-image-btn").addEventListener("click", () => this.resetImageSelection())
+    const fileInput = document.getElementById("story-image")
+    fileInput.addEventListener("change", (event) => this.handleFileSelected(event))
+    const form = document.getElementById("story-form")
+    form.addEventListener("submit", (event) => this.handleSubmit(event))
+  }
+
+  activateCamera() {
+    const cameraSection = document.getElementById("camera-section")
+    const uploadSection = document.getElementById("upload-section")
+    const imagePreviewContainer = document.getElementById("image-preview-container")
+
+    uploadSection.style.display = "none"
+    imagePreviewContainer.style.display = "none"
+    cameraSection.style.display = "block"
+
+    this.imageSource = "camera"
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+      })
+      .then((stream) => {
+        const cameraStream = document.getElementById("camera-stream")
+        cameraStream.srcObject = stream
+        this.currentStream = stream
+      })
+      .catch((err) => {
+        Swal.fire({
+          title: "Camera Error!",
+          text: `Could not access the camera: ${err}`,
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#f04747",
+        })
+        this.resetImageSelection()
+      })
+  }
+
+  activateFileUpload() {
+    const cameraSection = document.getElementById("camera-section")
+    const uploadSection = document.getElementById("upload-section")
+    const imagePreviewContainer = document.getElementById("image-preview-container")
+
+    this.stopCameraStream()
+
+    cameraSection.style.display = "none"
+    imagePreviewContainer.style.display = "none"
+    uploadSection.style.display = "block"
+
+    this.imageSource = "upload"
+
+    document.getElementById("story-image").value = ""
+  }
+
+  takePhoto() {
+    const cameraStream = document.getElementById("camera-stream")
+
+    const canvas = document.createElement("canvas")
+    canvas.width = cameraStream.videoWidth
+    canvas.height = cameraStream.videoHeight
+
+    const ctx = canvas.getContext("2d")
+    ctx.drawImage(cameraStream, 0, 0, canvas.width, canvas.height)
+
+    this.capturedImage = canvas.toDataURL("image/jpeg", 0.9)
+
+    this.stopCameraStream()
+
+    this.showImagePreview(this.capturedImage)
+  }
+
+  retakePhoto() {
+    if (this.imageSource === "camera") {
+      document.getElementById("image-preview-container").style.display = "none"
+      this.activateCamera()
+    } else {
+      this.resetImageSelection()
+    }
+  }
+
+  cancelCamera() {
+    this.stopCameraStream()
+    this.resetImageSelection()
+  }
+
+  stopCameraStream() {
+    if (this.currentStream) {
+      console.log("Stopping camera stream")
+      const tracks = this.currentStream.getTracks()
+      tracks.forEach((track) => track.stop())
+      this.currentStream = null
+    }
+  }
+
+  handleFileSelected(event) {
+    const file = event.target.files[0]
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file)
+      this.showImagePreview(imageUrl)
+    }
+  }
+
+  showImagePreview(imageUrl) {
+    const cameraSection = document.getElementById("camera-section")
+    const uploadSection = document.getElementById("upload-section")
+    const imagePreviewContainer = document.getElementById("image-preview-container")
+    const imagePreview = document.getElementById("image-preview")
+    const retakePhotoBtn = document.getElementById("retake-photo-btn")
+
+    cameraSection.style.display = "none"
+    uploadSection.style.display = "none"
+
+    imagePreview.innerHTML = ""
+
+    const img = document.createElement("img")
+    img.src = imageUrl
+    img.alt = "Selected Image"
+    img.className = "preview-image"
+
+    imagePreview.appendChild(img)
+
+    if (this.imageSource === "camera") {
+      retakePhotoBtn.style.display = "block"
+    } else {
+      retakePhotoBtn.style.display = "none"
+    }
+
+    imagePreviewContainer.style.display = "block"
+  }
+
+  resetImageSelection() {
+    const cameraSection = document.getElementById("camera-section")
+    const uploadSection = document.getElementById("upload-section")
+    const imagePreviewContainer = document.getElementById("image-preview-container")
+
+    this.stopCameraStream()
+
+    cameraSection.style.display = "none"
+    uploadSection.style.display = "none"
+    imagePreviewContainer.style.display = "none"
+
+    this.capturedImage = null
+    this.imageSource = null
+
+    document.querySelector(".image-selection").style.display = "block"
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault()
+
+    // Collect form data
+    const description = document.getElementById("story-text").value
+    const lat = Number.parseFloat(document.getElementById("lat").value)
+    const lon = Number.parseFloat(document.getElementById("lon").value)
+
+    if (isNaN(lat) || isNaN(lon)) {
+      Swal.fire({
+        title: "Error!",
+        text: "Please select a location on the map.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#f04747",
+      })
+      return
+    }
+
+    let imageFile = null
+
+    // Handle file selection for image
+    if (this.imageSource === "upload") {
+      imageFile = document.getElementById("story-image").files[0]
+      if (!imageFile) {
+        Swal.fire({
+          title: "Error!",
+          text: "Please select an image file.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#f04747",
+        })
+        return
+      }
+    } else if (this.imageSource === "camera" && this.capturedImage) {
+      imageFile = await this.base64ToFile(this.capturedImage, "camera-photo.jpg")
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: "Please select an image or take a photo.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#f04747",
+      })
+      return
+    }
+
+    // Show the loading overlay
+    const loadingOverlay = document.getElementById("loading-overlay")
+    if (loadingOverlay) {
+      loadingOverlay.style.display = "flex"
+    }
+
+    const submitBtn = document.getElementById("submit-btn")
+    const originalBtnText = submitBtn.textContent
+    submitBtn.textContent = "Submitting..."
+    submitBtn.disabled = true
+
+    try {
+      const formData = new FormData()
+      formData.append("description", description)
+      formData.append("photo", imageFile)
+      formData.append("lat", lat)
+      formData.append("lon", lon)
+
+      const result = await this.presenter.addStory(formData)
+
+      if (result.success) {
+        Swal.fire({
+          title: "Success!",
+          text: "Your story has been added!",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "View Story",
+          confirmButtonColor: "#5865f2",
+          timer: 3000,
+          willClose: () => {
+            window.location.hash = "#/story"
+          },
+        })
+
+        // Only show notification prompt if:
+        // 1. Notifications are not enabled
+        // 2. Notifications are supported
+        // 3. The prompt hasn't been shown before
+        if (!this.notificationEnabled && PushNotification.isSupported() && !PushNotification.wasPromptShown()) {
+          // Mark that we've shown the prompt
+          PushNotification.setPromptShown()
+
+          setTimeout(() => {
+            Swal.fire({
+              title: "Enable Notifications?",
+              text: "Would you like to receive notifications when your story is published?",
+              icon: "question",
+              background: "#121212",
+              color: "#e0e0e0",
+              showCancelButton: true,
+              confirmButtonText: "Yes, enable",
+              cancelButtonText: "No, thanks",
+              confirmButtonColor: "#5865f2",
+              cancelButtonColor: "#f04747",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                PushNotification.requestPermissionAndSubscribe().then((subscribeResult) => {
+                  if (subscribeResult.success) {
+                    PushNotification.setNotificationPreference(true)
+                    this.notificationEnabled = true
+                    // Update the checkbox if it exists
+                    const notificationToggle = document.getElementById("push-notification-toggle")
+                    if (notificationToggle) {
+                      notificationToggle.checked = true
+                    }
+                  } else {
+                    PushNotification.setNotificationPreference(false)
+                  }
+                })
+              } else {
+                // User declined notifications
+                PushNotification.setNotificationPreference(false)
+              }
+            })
+          }, 1000)
+        }
+      } else {
+        throw new Error(result.message || "Failed to add story")
+      }
+    } catch (error) {
+      console.error("Error adding story:", error)
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to add story: ${error.message}`,
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+        confirmButtonText: "Try Again",
+        confirmButtonColor: "#f04747",
+      })
+    } finally {
+      // Hide the loading overlay and reset button text
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "none"
+      }
+      submitBtn.textContent = originalBtnText
+      submitBtn.disabled = false
+    }
+  }
+
+  async base64ToFile(base64String, filename) {
+    const parts = base64String.split(";base64,")
+    const contentType = parts[0].split(":")[1]
+    const raw = window.atob(parts[1])
+    const rawLength = raw.length
+
+    const uInt8Array = new Uint8Array(rawLength)
+
+    for (let i = 0; i < rawLength; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i)
+    }
+
+    const blob = new Blob([uInt8Array], { type: contentType })
+
+    return new File([blob], filename, { type: contentType })
+  }
+}
+
+
+--- File: src\scripts\pages\app.js ---
+import routes from "../routes/routes";
+import { getActiveRoute } from "../routes/url-parser";
+
+class App {
+  #content = null;
+  #drawerButton = null;
+  #navigationDrawer = null;
+  #currentPage = null;
+
+  constructor({ navigationDrawer, drawerButton, content }) {
+    this.#content = content;
+    this.#drawerButton = drawerButton;
+    this.#navigationDrawer = navigationDrawer;
+
+    // Make sure main content can receive focus for skip link functionality
+    if (!this.#content.hasAttribute("tabindex")) {
+      this.#content.setAttribute("tabindex", "-1");
+    }
+
+    this.#setupDrawer();
+  }
+
+  #setupDrawer() {
+    this.#drawerButton.addEventListener("click", () => {
+      this.#navigationDrawer.classList.toggle("open");
+    });
+
+    document.body.addEventListener("click", (event) => {
+      if (
+        !this.#navigationDrawer.contains(event.target) &&
+        !this.#drawerButton.contains(event.target)
+      ) {
+        this.#navigationDrawer.classList.remove("open");
+      }
+
+      this.#navigationDrawer.querySelectorAll("a").forEach((link) => {
+        if (link.contains(event.target)) {
+          this.#navigationDrawer.classList.remove("open");
+        }
+      });
+    });
+  }
+
+  async renderPage() {
+    const url = getActiveRoute();
+    const page = routes[url]; // Get the page based on the active URL
+
+    // Clean up previous page if it exists and has a cleanup method
+    if (this.#currentPage && typeof this.#currentPage.cleanup === "function") {
+      console.log("Cleaning up previous page:", this.#currentPage.constructor.name);
+      this.#currentPage.cleanup();
+    }
+
+    // Set the new current page
+    this.#currentPage = page;
+
+    if (page) {
+      try {
+        // Create a fade-out animation using the Animation API
+        const fadeOutAnimation = this.#content.animate(
+          [
+            { opacity: 1 }, // Start at full opacity
+            { opacity: 0 }, // Fade out to 0 opacity
+          ],
+          {
+            duration: 500, // 0.5 seconds
+            fill: "forwards", // Keep the final state (opacity: 0)
+          }
+        );
+        await fadeOutAnimation.finished; // Wait until fade-out is complete
+
+        this.#content.innerHTML = await page.render();
+
+        // Create a fade-in animation using the Animation API
+        const fadeInAnimation = this.#content.animate(
+          [
+            { opacity: 0 }, // Start at 0 opacity
+            { opacity: 1 }, // Fade in to full opacity
+          ],
+          {
+            duration: 500, // 0.5 seconds
+            fill: "forwards", // Keep the final state (opacity: 1)
+          }
+        );
+        await fadeInAnimation.finished; // Wait until fade-in is complete
+        await page.afterRender();
+      } catch (error) {
+        console.error("Error rendering page:", error);
+        this.#content.innerHTML =
+          '<div class="error-container"><h2>Error</h2><p>Failed to load the page. Please try again.</p></div>';
+      }
+    } else {
+      this.#content.innerHTML = '<div class="error-container"><h2>404</h2><p>Page Not Found</p></div>';
+    }
+  }
+}
+
+export default App;
+
+
+--- File: src\scripts\pages\home-page.js ---
+import Swal from "sweetalert2"
+
+export default class HomePage {
+  constructor() {
+    this.presenter = null
+  }
+
+  setPresenter(presenter) {
+    this.presenter = presenter
+  }
+
+  async render() {
+    // Get user name from presenter
+    const userName = this.presenter ? this.presenter.getUserName() : "Guest"
+
+    return `
+      <section class="homepage-container">
+        <h1>Welcome, ${userName}!</h1>
+        <p>This is your home page. Feel free to explore!</p>
+        ${userName !== "Guest" ? '<button id="logout-btn">Logout</button>' : ""}
+      </section>
+    `
+  }
+
+  async afterRender() {
+    const logoutButton = document.getElementById("logout-btn")
+    if (logoutButton) {
+      logoutButton.addEventListener("click", () => this.handleLogout())
+    }
+  }
+
+  handleLogout() {
+    // Use presenter to handle logout
+    const result = this.presenter.logout()
+
+    if (result.success) {
+      // SweetAlert2 logout
+      Swal.fire({
+        title: "Logged Out",
+        text: "You have successfully logged out.",
+        icon: "success",
+        background: "#121212",
+        color: "#e0e0e0",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#5865f2",
+      }).then(() => {
+        // Redirect to the login page after the alert is closed
+        window.location.hash = "#/login"
+      })
+    }
+  }
+}
+
+
+--- File: src\scripts\pages\login-page.js ---
+import Swal from "sweetalert2";
+
+export default class LoginPage {
+  constructor() {
+    this.presenter = null;
+  }
+
+  setPresenter(presenter) {
+    this.presenter = presenter;
+  }
+
+  async render() {
+    return `
+      <main class="container" role="main">
+        <h1>Login</h1>
+        <form id="login-form" aria-labelledby="login-heading">
+          <h2 id="login-heading" class="sr-only">Login Form</h2>
+          
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required aria-describedby="email-help" />
+            <p id="email-help" class="help-text sr-only">Enter your registered email address</p>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required aria-describedby="password-help" />
+            <p id="password-help" class="help-text sr-only">Enter your password</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" aria-label="Login to your account">Login</button>
+          </div>
+          
+          <p class="form-footer">
+            Don't have an account? <a href="#/register">Register here</a>
+          </p>
+        </form>
+      </main>
+    `;
+  }
+
+  async afterRender() {
+    const form = document.getElementById("login-form");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Show the loading overlay
+      const loadingOverlay = document.getElementById("loading-overlay");
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "flex";
+      }
+
+      const result = await this.presenter.login(email, password);
+
+      // Hide the loading overlay once login is complete
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "none";
+      }
+
+      if (result.success) {
+        // SweetAlert2 Success with Dark Mode
+        Swal.fire({
+          title: "Login Successful!",
+          text: "Redirecting to your stories...",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "Go to Stories",
+          confirmButtonColor: "#5865f2",
+          timer: 3000,
+          willClose: () => {
+            window.location.hash = "#/story";
+          },
+        });
+      } else {
+        // SweetAlert2 Error with Dark Mode
+        Swal.fire({
+          title: "Login Failed!",
+          text: result.message || "Please check your credentials.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "Try Again",
+          confirmButtonColor: "#f04747",
+        });
+      }
+    });
+  }
+}
+
+
+--- File: src\scripts\pages\register-page.js ---
+import Swal from "sweetalert2";
+
+export default class RegisterPage {
+  constructor() {
+    this.presenter = null;
+  }
+
+  setPresenter(presenter) {
+    this.presenter = presenter;
+  }
+
+  async render() {
+    return `
+      <main class="container" role="main">
+        <h1>Register</h1>
+        <form id="register-form" aria-labelledby="register-heading">
+          <h2 id="register-heading" class="sr-only">Registration Form</h2>
+          
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required aria-describedby="name-help" />
+            <p id="name-help" class="help-text sr-only">Enter your full name</p>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required aria-describedby="email-help" />
+            <p id="email-help" class="help-text sr-only">Enter a valid email address</p>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="8" aria-describedby="password-help" />
+            <p id="password-help" class="help-text">Password must be at least 8 characters long</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" aria-label="Create your account">Register</button>
+          </div>
+          
+          <p class="form-footer">
+            Already have an account? <a href="#/login">Login here</a>
+          </p>
+        </form>
+      </main>
+    `;
+  }
+
+  async afterRender() {
+    const form = document.getElementById("register-form");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Show the loading overlay
+      const loadingOverlay = document.getElementById("loading-overlay");
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "flex";
+      }
+
+      // Change button text to show loading state
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.textContent = "Registering...";
+      submitBtn.disabled = true;
+
+      // Create a status message for screen readers
+      this.createStatusMessage("Attempting to register. Please wait...");
+
+      const result = await this.presenter.register(name, email, password);
+
+      // Hide the loading overlay once registration is complete
+      if (loadingOverlay) {
+        loadingOverlay.style.display = "none";
+      }
+
+      if (result.success) {
+        // Update status for screen readers
+        this.createStatusMessage("Registration successful! Redirecting to login page...");
+
+        // Dark Mode SweetAlert2 Success
+        Swal.fire({
+          title: "Registration Successful!",
+          text: "You can now log in.",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "Go to Login",
+          confirmButtonColor: "#5865f2",
+          timer: 3000,
+          willClose: () => {
+            window.location.hash = "#/login";
+          },
+        });
+      } else {
+        // Update status for screen readers
+        this.createStatusMessage("Registration failed. Please try again.");
+
+        // Dark Mode SweetAlert2 Error
+        Swal.fire({
+          title: "Registration Failed!",
+          text: result.message || "Please try again later.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+          confirmButtonText: "Retry",
+          confirmButtonColor: "#f04747",
+        });
+
+        // Reset button state
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // Helper method to create status messages for screen readers
+  createStatusMessage(message) {
+    const statusElement = document.getElementById("register-status");
+
+    if (statusElement) {
+      statusElement.textContent = message;
+    } else {
+      const newStatusElement = document.createElement("div");
+      newStatusElement.id = "register-status";
+      newStatusElement.className = "sr-only";
+      newStatusElement.setAttribute("aria-live", "polite");
+      newStatusElement.textContent = message;
+      document.body.appendChild(newStatusElement);
+    }
+  }
+}
+
+
+--- File: src\scripts\pages\story-page.js ---
+export default class StoryPage {
+  constructor() {
+    this.presenter = null
+    this.handleModalKeydown = null
+  }
+
+  setPresenter(presenter) {
+    this.presenter = presenter
+  }
+
+  async render() {
+    // Check if user is logged in through presenter
+    const isLoggedIn = this.presenter ? this.presenter.isLoggedIn() : false
+    const userName = isLoggedIn ? localStorage.getItem("userName") : null
+
+    if (!isLoggedIn) {
+      return `
+        <main class="container" role="main">
+          <h1>Authentication Required</h1>
+          <p>You need to be logged in to view stories.</p>
+          <a href="#/login" class="btn">Login</a>
+        </main>
+      `
+    }
+
+    return `
+      <main class="container" role="main">
+        <h1>All Stories</h1>
+        <p>Welcome, ${userName || "User"}!</p>
+        <div id="loading-indicator" aria-live="polite">Loading stories...</div>
+        <div id="stories-container" class="story-feed" role="feed" aria-busy="true" aria-label="Stories feed"></div>
+        
+        <!-- Story Details Modal -->
+        <div id="story-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+          <div class="modal-content">
+            <button id="close-modal" class="close-button" aria-label="Close story details">&times;</button>
+            <h2 id="modal-title"></h2>
+            <div id="modal-image-container">
+              <!-- Image will be inserted here -->
+            </div>
+            <p id="modal-description"></p>
+            <p id="modal-createdAt"></p>
+            <p id="modal-location"></p>
+            <div id="modal-map" class="modal-map-container" style="display: none;" role="application" aria-label="Story location map"></div>
+          </div>
+        </div>
+      </main>
+    `
+  }
+
+  async afterRender() {
+    if (!this.presenter || !this.presenter.isLoggedIn()) return
+
+    const storiesContainer = document.getElementById("stories-container")
+    const loadingIndicator = document.getElementById("loading-indicator")
+
+    try {
+      const page = 1
+      const size = 10
+      const location = 0
+
+      const result = await this.presenter.getAllStories(page, size, location)
+
+      if (loadingIndicator) {
+        loadingIndicator.style.display = "none"
+      }
+
+      // Update ARIA attributes to indicate loading is complete
+      storiesContainer.setAttribute("aria-busy", "false")
+
+      if (!result.success || !result.data || result.data.length === 0) {
+        storiesContainer.innerHTML = `<p>${result.message || "No stories found."}</p>`
+        return
+      }
+
+      const stories = result.data
+
+      storiesContainer.innerHTML = stories
+        .map(
+          (story, index) => `
+            <article class="story-card" data-story-id="${
+              story.id
+            }" tabindex="0" role="article" aria-labelledby="story-title-${index}" aria-describedby="story-desc-${index}">
+              <img src="${story.photoUrl}" alt="Image for story: ${story.name}" class="story-image" />
+              <div class="story-content">
+                <h2 id="story-title-${index}" class="story-title">${story.name}</h2>
+                <p id="story-desc-${index}" class="story-description">${story.description}</p>
+                ${
+                  story.lat && story.lon
+                    ? `<p class="story-location">Location: ${story.lat.toFixed(6)}, ${story.lon.toFixed(6)}</p>`
+                    : ""
+                }
+              </div>
+            </article>
+          `,
+        )
+        .join("")
+
+      // Add click event listener to all story cards
+      const storyCards = document.querySelectorAll(".story-card")
+      storyCards.forEach((card) => {
+        card.addEventListener("click", async (e) => {
+          const storyId = e.currentTarget.getAttribute("data-story-id")
+          await this.showStoryDetails(storyId)
+        })
+
+        // Add keyboard support
+        card.addEventListener("keydown", async (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            const storyId = e.currentTarget.getAttribute("data-story-id")
+            await this.showStoryDetails(storyId)
+          }
+        })
+      })
+    } catch (error) {
+      if (loadingIndicator) {
+        loadingIndicator.style.display = "none"
+      }
+
+      storiesContainer.innerHTML = `
+        <div class="error-message" role="alert">
+          <p>${error.message || "Failed to load stories"}</p>
+          <a href="#/login" class="btn">Login again</a>
+        </div>
+      `
+    }
+  }
+
+  // Show Story Details in the Modal
+  async showStoryDetails(storyId) {
+    const modal = document.getElementById("story-modal")
+
+    // Show loading state in modal
+    modal.style.display = "block"
+    document.getElementById("modal-title").textContent = "Loading story details..."
+    document.getElementById("modal-description").textContent = ""
+    document.getElementById("modal-createdAt").textContent = ""
+    document.getElementById("modal-location").textContent = ""
+    document.getElementById("modal-image-container").innerHTML = ""
+    document.getElementById("modal-map").style.display = "none"
+
+    // Set ARIA attributes for the modal
+    modal.setAttribute("aria-hidden", "false")
+
+    try {
+      const result = await this.presenter.getStoryDetails(storyId)
+
+      if (!result.success) {
+        throw new Error(result.message || "Failed to load story details")
+      }
+
+      const storyDetails = result.data
+
+      // Update modal content with the fetched details
+      document.getElementById("modal-title").textContent = storyDetails.name
+
+      // Create image with proper alt text
+      const imageContainer = document.getElementById("modal-image-container")
+      imageContainer.innerHTML = ""
+      const img = document.createElement("img")
+      img.src = storyDetails.photoUrl
+      img.alt = `Image for story: ${storyDetails.name}`
+      img.id = "modal-image"
+      imageContainer.appendChild(img)
+
+      document.getElementById("modal-description").textContent = storyDetails.description
+      document.getElementById("modal-createdAt").textContent = `Created At: ${new Date(
+        storyDetails.createdAt,
+      ).toLocaleString()}`
+
+      // Handle location data
+      if (storyDetails.lat && storyDetails.lon) {
+        // If location exists, show location and Google Map
+        document.getElementById("modal-location").textContent = `Location: ${storyDetails.lat.toFixed(
+          6,
+        )}, ${storyDetails.lon.toFixed(6)}`
+        document.getElementById("modal-map").style.display = "block"
+
+        // Check if google maps is loaded
+        if (typeof google === "undefined") {
+          console.error("Google Maps API not loaded. Ensure it is included in your HTML.")
+          return
+        }
+
+        this.initMap(storyDetails.lat, storyDetails.lon)
+      } else {
+        // If no location, show the "Location not available" message
+        document.getElementById("modal-location").textContent = "Location not available"
+        document.getElementById("modal-map").style.display = "none" // Hide map
+      }
+
+      // Close modal when the user clicks on the close button
+      document.getElementById("close-modal").addEventListener("click", () => {
+        this.closeModal()
+      })
+
+      // Add keyboard support for closing the modal with Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.style.display === "block") {
+          this.closeModal()
+        }
+      })
+
+      // Trap focus within the modal
+      this.trapFocusInModal()
+    } catch (error) {
+      console.error("Error fetching story details:", error)
+      document.getElementById("modal-title").textContent = "Error"
+      document.getElementById("modal-description").textContent = "Failed to load story details"
+      document.getElementById("modal-image-container").innerHTML = ""
+    }
+  }
+
+  // Close the modal and reset ARIA attributes
+  closeModal() {
+    const modal = document.getElementById("story-modal")
+    modal.style.display = "none"
+    modal.setAttribute("aria-hidden", "true")
+
+    // Remove event listeners
+    document.removeEventListener("keydown", this.handleModalKeydown)
+  }
+
+  // Trap focus within the modal for keyboard users
+  trapFocusInModal() {
+    const modal = document.getElementById("story-modal")
+    const focusableElements = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    )
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
+
+    // Focus the first element
+    firstElement.focus()
+
+    // Handle tab key to trap focus
+    this.handleModalKeydown = (e) => {
+      if (e.key === "Tab") {
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault()
+          lastElement.focus()
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault()
+          firstElement.focus()
+        }
+      }
+    }
+
+    document.addEventListener("keydown", this.handleModalKeydown)
+  }
+
+  // Initialize Google Map inside the modal
+  initMap(lat, lon) {
+    const mapContainer = document.getElementById("modal-map")
+
+    // Check if google maps is loaded
+    if (typeof google === "undefined") {
+      console.error("Google Maps API not loaded. Ensure it is included in your HTML.")
+      return
+    }
+
+    const map = new google.maps.Map(mapContainer, {
+      center: { lat: lat, lng: lon },
+      zoom: 14,
+    })
+
+    const marker = new google.maps.Marker({
+      position: { lat: lat, lng: lon },
+      map: map,
+      title: "Story Location",
+    })
+
+    // Add a descriptive label for screen readers
+    const mapLabel = document.createElement("p")
+    mapLabel.classList.add("sr-only")
+    mapLabel.textContent = `Map showing location at latitude ${lat.toFixed(6)} and longitude ${lon.toFixed(6)}`
+    mapContainer.appendChild(mapLabel)
+  }
+}
+
+
+--- File: src\scripts\presenters\add-story-presenter.js ---
+class AddStoryPresenter {
+    constructor(view, model) {
+      this.view = view
+      this.model = model
+      this.view.setPresenter(this)
+    }
+  
+    async addStory(storyData) {
+      try {
+        const response = await this.model.addStory(storyData)
+        return { success: true, data: response }
+      } catch (error) {
+        console.error("Error in presenter adding story:", error)
+        return { success: false, message: error.message || "Failed to add story" }
+      }
+    }
+  
+    isLoggedIn() {
+      return this.model.isLoggedIn()
+    }
+  }
+  
+  export default AddStoryPresenter
+  
+
+--- File: src\scripts\presenters\home-presenter.js ---
+class HomePresenter {
+    constructor(view, model) {
+      this.view = view
+      this.model = model
+      this.view.setPresenter(this)
+    }
+  
+    getUserName() {
+      const userData = this.model.getUserData()
+      return userData.userName || "Guest"
+    }
+  
+    logout() {
+      this.model.logout()
+      return { success: true }
+    }
+  }
+  
+  export default HomePresenter
+  
+
+--- File: src\scripts\presenters\login-presenter.js ---
+class LoginPresenter {
+    constructor(view, model) {
+      this.view = view
+      this.model = model
+      this.view.setPresenter(this)
+    }
+  
+    async login(email, password) {
+      try {
+        const response = await this.model.login(email, password)
+  
+        if (response && !response.error) {
+          // Save user data to localStorage
+          this.model.saveUserData(response.loginResult.token, response.loginResult.name)
+          return { success: true, data: response.loginResult }
+        } else {
+          return { success: false, message: "Login failed. Please check your credentials." }
+        }
+      } catch (error) {
+        console.error("Login error:", error)
+        return { success: false, message: error.message || "An error occurred during login." }
+      }
+    }
+  }
+  
+  export default LoginPresenter
+  
+
+--- File: src\scripts\presenters\register-presenter.js ---
+class RegisterPresenter {
+    constructor(view, model) {
+      this.view = view
+      this.model = model
+      this.view.setPresenter(this)
+    }
+  
+    async register(name, email, password) {
+      try {
+        const response = await this.model.register(name, email, password)
+  
+        if (response && !response.error) {
+          return { success: true, data: response }
+        } else {
+          return { success: false, message: "Registration failed. Please try again." }
+        }
+      } catch (error) {
+        console.error("Registration error:", error)
+        return { success: false, message: error.message || "An error occurred during registration." }
+      }
+    }
+  }
+  
+  export default RegisterPresenter
+  
+
+--- File: src\scripts\presenters\story-presenter.js ---
+class StoryPresenter {
+    constructor(view, model) {
+      this.view = view
+      this.model = model
+      this.view.setPresenter(this)
+    }
+  
+    async getAllStories(page = 1, size = 10, location = 0) {
+      try {
+        const stories = await this.model.getAllStories(page, size, location)
+        return { success: true, data: stories }
+      } catch (error) {
+        console.error("Error in presenter getting stories:", error)
+        return { success: false, message: error.message || "Failed to load stories" }
+      }
+    }
+  
+    async getStoryDetails(storyId) {
+      try {
+        const storyDetails = await this.model.getStoryDetails(storyId)
+        return { success: true, data: storyDetails }
+      } catch (error) {
+        console.error("Error in presenter getting story details:", error)
+        return { success: false, message: error.message || "Failed to load story details" }
+      }
+    }
+  
+    isLoggedIn() {
+      return this.model.isLoggedIn()
+    }
+  }
+  
+  export default StoryPresenter
+  
+
+--- File: src\scripts\routes\routes.js ---
+import HomePage from "../pages/home-page"
+import AddStoryPage from "../pages/add-story-page"
+import StoryPage from "../pages/story-page"
+import RegisterPage from "../pages/register-page"
+import LoginPage from "../pages/login-page"
+
+// Import models
+import UserModel from "../models/user-model"
+import StoryModel from "../models/story-model"
+
+// Import presenters
+import HomePresenter from "../presenters/home-presenter"
+import AddStoryPresenter from "../presenters/add-story-presenter"
+import StoryPresenter from "../presenters/story-presenter"
+import RegisterPresenter from "../presenters/register-presenter"
+import LoginPresenter from "../presenters/login-presenter"
+
+// Create model instances
+const userModel = new UserModel()
+const storyModel = new StoryModel()
+
+// Create view instances
+const homePage = new HomePage()
+const addStoryPage = new AddStoryPage()
+const storyPage = new StoryPage()
+const registerPage = new RegisterPage()
+const loginPage = new LoginPage()
+
+// Create presenter instances and connect them with views and models
+const homePresenter = new HomePresenter(homePage, userModel)
+const addStoryPresenter = new AddStoryPresenter(addStoryPage, storyModel)
+const storyPresenter = new StoryPresenter(storyPage, storyModel)
+const registerPresenter = new RegisterPresenter(registerPage, userModel)
+const loginPresenter = new LoginPresenter(loginPage, userModel)
+
+// Define routes after presenters are initialized
+const routes = {
+  "/": homePage,
+  "/add-story": addStoryPage,
+  "/story": storyPage,
+  "/register": registerPage,
+  "/login": loginPage,
+}
+
+export default routes
+
+
+--- File: src\scripts\routes\url-parser.js ---
+function extractPathnameSegments(path) {
+  const splitUrl = path.split('/');
+
+  return {
+    resource: splitUrl[1] || null,
+    id: splitUrl[2] || null,
+  };
+}
+
+function constructRouteFromSegments(pathSegments) {
+  let pathname = '';
+
+  if (pathSegments.resource) {
+    pathname = pathname.concat(`/${pathSegments.resource}`);
+  }
+
+  if (pathSegments.id) {
+    pathname = pathname.concat('/:id');
+  }
+
+  return pathname || '/';
+}
+
+export function getActivePathname() {
+  return location.hash.replace('#', '') || '/';
+}
+
+export function getActiveRoute() {
+  const pathname = getActivePathname();
+  const urlSegments = extractPathnameSegments(pathname);
+  return constructRouteFromSegments(urlSegments);
+}
+
+export function parseActivePathname() {
+  const pathname = getActivePathname();
+  return extractPathnameSegments(pathname);
+}
+
+export function getRoute(pathname) {
+  const urlSegments = extractPathnameSegments(pathname);
+  return constructRouteFromSegments(urlSegments);
+}
+
+export function parsePathname(pathname) {
+  return extractPathnameSegments(pathname);
+}
+
+
+--- File: src\styles\coordinates-display.css ---
+/* Coordinates Display Styling */
+.coordinates-display {
+    margin: 16px 0;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--input-border);
+    transition: all 0.3s ease;
+  }
+  
+  .coordinates-display.location-selected {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 1px var(--accent-primary);
+  }
+  
+  .coordinates-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .coordinates-info h4 {
+    margin: 0;
+    color: var(--accent-primary);
+    font-size: 1.1rem;
+  }
+  
+  .coordinates-info p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  
+  .coordinates-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  
+  /* Add a copy button for coordinates */
+  .copy-coordinates {
+    background-color: var(--bg-tertiary);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    margin-top: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+  
+  .copy-coordinates:hover {
+    background-color: var(--accent-primary);
+    color: white;
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 768px) {
+    .coordinates-info {
+      flex-direction: column;
+    }
+  }
+  
+
+--- File: src\styles\push-notification-toggle.css ---
+/* Add these styles at the end of your styles.css file */
+
+/* Push Notification Toggle */
+.notification-toggle {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #1e1e1e;
+  border-radius: 0.5rem;
+  border: 1px solid #333;
+}
+
+.notification-toggle input[type="checkbox"] {
+  margin-right: 0.75rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+
+.notification-toggle label {
+  cursor: pointer;
+  font-size: 1rem;
+  color: #e0e0e0;
+}
+
+/* Improve checkbox styling */
+input[type="checkbox"] {
+  accent-color: #5865f2;
+}
+
+--- File: src\styles\sr-only.css ---
+/* Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Improved focus styles for keyboard navigation */
+  a:focus, button:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+  
+  /* Improved focus visibility for story cards */
+  .story-card:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+--- File: src\styles\styles.css ---
+/* Modern Dark Theme - General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent-primary: #7289da;
+  --accent-secondary: #5865f2;
+  --accent-tertiary: #4752c4;
+  --danger: #f04747;
+  --success: #43b581;
+  --warning: #faa61a;
+  --border-radius: 8px;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --input-bg: #2d2d2d;
+  --input-border: #3d3d3d;
+  --header-bg: #1a1a1a;
+  --modal-bg: #1e1e1e;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  padding: 24px;
+  margin: 0 auto;
+  max-width: 1300px;
+  width: 100%;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+/* Improved h1 alignment and styling */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 32px;
+  position: relative;
+  padding-bottom: 16px;
+  text-align: center;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--accent-secondary);
+  text-decoration: none;
+}
+
+/* Enhanced Header and Navigation */
+header {
+  background-color: var(--header-bg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.main-header {
+  min-height: 70px;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--accent-primary);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-name::before {
+  content: '📖';
+  font-size: 1.8rem;
+}
+
+/* Improved Navigation Drawer */
+.navigation-drawer {
+  min-height: 100vh;
+  width: 280px;
+  padding: 80px 16px 24px;
+  background-color: var(--bg-secondary);
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+.navigation-drawer.open {
+  transform: translateX(0);
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Enhanced Navigation Links */
+.nav-list li a {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.nav-list li a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background-color: var(--accent-primary);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+}
+
+.nav-list li a:hover {
+  background-color: rgba(114, 137, 218, 0.1);
+  color: var(--accent-primary);
+}
+
+.nav-list li a:hover::before {
+  transform: scaleY(1);
+}
+
+.drawer-button {
+  padding: 10px;
+  border: 0;
+  border-radius: var(--border-radius);
+  display: inline-block;
+  background-color: transparent;
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.drawer-button:hover {
+  color: var(--accent-primary);
+  transform: scale(1.1);
+}
+
+/* Improved Navigation Bar (Visible on large screens) */
+.navigation-bar {
+  display: none;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.navigation-bar .nav-list {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.navigation-bar .nav-list li a {
+  display: flex;
+  padding: 10px 18px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.navigation-bar .nav-list li a::before {
+  display: none;
+}
+
+.navigation-bar .nav-list li a::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-primary);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navigation-bar .nav-list li a:hover::after {
+  width: 60%;
+  left: 20%;
+}
+
+@media screen and (min-width: 1000px) {
+  .navigation-drawer {
+    display: none;
+  }
+
+  .navigation-bar {
+    display: flex;
+  }
+
+  .drawer-button {
+    display: none;
+  }
+}
+
+/* Main Content Area */
+.main-content {
+  padding: 24px 0;
+  min-height: calc(100vh - 70px);
+}
+
+/* Story Feed Layout */
+.story-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+/* Story Card Styling */
+.story-card {
+  background-color: var(--bg-secondary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 420px;
+  cursor: pointer;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.story-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.story-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.story-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  flex-grow: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.story-location {
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  margin-top: auto;
+}
+
+.story-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--bg-tertiary);
+}
+
+.timestamp {
+  font-style: italic;
+}
+
+.location {
+  font-weight: 500;
+  color: var(--accent-primary);
+}
+
+/* Form Elements */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+input[type="file"] {
+  padding: 10px;
+  background-color: var(--bg-tertiary);
+  border: 1px dashed var(--input-border);
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  margin-right: 16px;
+  transition: background-color 0.2s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: var(--accent-secondary);
+}
+
+button {
+  padding: 12px 24px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background-color: var(--accent-secondary);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* Map Styles */
+.map-container {
+  height: 400px;
+  width: 100%;
+  border-radius: var(--border-radius);
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid var(--input-border);
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: var(--modal-overlay);
+  padding-top: 60px;
+  backdrop-filter: blur(4px);
+}
+
+/* Ensure the modal content is positioned relative to allow absolute positioning of the close button */
+.modal-content {
+  position: relative;
+  background-color: var(--modal-bg);
+  margin: 5% auto;
+  padding: 24px;
+  border: 1px solid var(--bg-tertiary);
+  width: 90%;
+  max-width: 700px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close button positioned in the top right corner */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 20px; 
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 16px;  
+  margin: 0;
+  transition: color 0.3s ease, transform 0.2s ease, background-color 0.3s ease;
+}
+
+.close-button:hover {
+  color: var(--accent-primary);
+  background-color: rgba(114, 137, 218, 0.1); 
+  transform: scale(1.1);
+}
+
+.close-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary); 
+}
+
+.modal img {
+  width: 100%;
+  border-radius: var(--border-radius);
+  margin-bottom: 16px;
+}
+
+.modal p {
+  margin: 16px 0;
+}
+
+.modal-map-container {
+  height: 300px;
+  width: 100%;
+  margin-top: 16px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* Add Story Page Specific Styles */
+.image-selection {
+  margin: 24px 0;
+}
+
+.image-source-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.source-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.source-btn:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 2px solid var(--bg-tertiary);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: #000;
+}
+
+#camera-stream {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.camera-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.primary-btn {
+  padding: 14px 28px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.secondary-btn {
+  padding: 14px 28px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primary-btn:hover {
+  background-color: var(--accent-secondary);
+}
+
+.secondary-btn:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+}
+
+.primary-btn:active, .secondary-btn:active {
+  transform: translateY(1px);
+}
+
+/* Improved Image Preview Container with Retake Button */
+#image-preview-container {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  background-color: var(--bg-secondary);
+}
+
+#image-preview {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Image Preview Controls */
+.image-preview-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+#retake-photo-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#retake-photo-btn::before {
+  content: '📷';
+}
+
+#change-image-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#change-image-btn::before {
+  content: '🔄';
+}
+
+.help-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.form-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+#submit-btn {
+  padding: 16px 36px;
+  font-size: 1.1rem;
+  min-width: 200px;
+}
+
+/* Error and Success Messages */
+.error-message {
+  background-color: rgba(240, 71, 71, 0.1);
+  border-left: 4px solid var(--danger);
+  padding: 16px;
+  border-radius: var(--border-radius);
+  margin-bottom: 24px;
+}
+
+.success-message {
+  background-color: rgba(67, 181, 129, 0.1);
+  border-left: 4px solid var(--success);
+  padding: 16px;
+  border-radius: var(--border-radius);
+  margin-bottom: 24px;
+}
+
+/* Loading Indicator */
+#loading-indicator {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+#loading-indicator::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--accent-primary);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Login and Register Pages */
+.auth-container {
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-container form {
+  gap: 24px;
+}
+
+.auth-container .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-container .form-footer {
+  text-align: center;
+  margin-top: 24px;
+  color: var(--text-secondary);
+}
+
+.auth-container .form-footer a {
+  color: var(--accent-primary);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: var(--accent-primary);
+  color: white;
+  border-radius: var(--border-radius);
+  text-align: center;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--accent-secondary);
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: #d04343;
+}
+
+/* Responsive styles for Add Story Page */
+@media screen and (max-width: 768px) {
+  .image-source-buttons {
+    flex-direction: column;
+  }
+  
+  .camera-container {
+    max-width: 100%;
+  }
+  
+  .camera-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .image-preview-controls {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .story-feed {
+    grid-template-columns: 1fr;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .primary-btn, .secondary-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Custom Google Maps styling for dark mode */
+.gm-style {
+  filter: invert(90%) hue-rotate(180deg);
+}
+
+/* HomePage specific container styling */
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  text-align: center; 
+  height: 100vh;
+  padding: 20px; 
+}
+
+.homepage-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.homepage-container p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.homepage-container button {
+  padding: 10px 20px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.homepage-container button:hover {
+  background-color: var(--accent-secondary);
+  transform: scale(1.05);
+}
+
+/* Styles for the skip to content button */
+.skip-to-content {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+.skip-to-content:focus {
+  background-color: var(--accent-secondary);
+  outline: none;
+}
+
+/* Initially hide the button */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.page {
+  animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Loading overlay styling */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; 
+}
+
+#loading-spinner {
+  border: 4px solid transparent;
+  border-top: 4px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+--- File: src\utils\push-notification.js ---
+import CONFIG from "../scripts/config"
+
+const PushNotification = {
+  // VAPID public key from the provided documentation
+  VAPID_PUBLIC_KEY: "BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk",
+
+  // Check if Push API is supported by the browser
+  isSupported() {
+    return "serviceWorker" in navigator && "PushManager" in window
+  },
+
+  // Convert URL-safe base64 to Uint8Array
+  urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/")
+
+    const rawData = window.atob(base64)
+    const outputArray = new Uint8Array(rawData.length)
+
+    for (let i = 0; i < rawData.length; i++) {
+      outputArray[i] = rawData.charCodeAt(i)
+    }
+
+    return outputArray
+  },
+
+  // Register the service worker
+  async registerServiceWorker() {
+    if (!this.isSupported()) {
+      console.error("Push notifications not supported")
+      return null
+    }
+
+    try {
+      // The path should be '/sw.js' - from the root of your site
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+      })
+      console.log("Service Worker registered successfully:", registration)
+      return registration
+    } catch (error) {
+      console.error("Service Worker registration failed:", error)
+      return null
+    }
+  },
+
+  // Store user's preference about notifications
+  setNotificationPreference(enabled) {
+    localStorage.setItem("notification_preference", enabled ? "enabled" : "disabled")
+  },
+
+  // Get user's notification preference
+  getNotificationPreference() {
+    return localStorage.getItem("notification_preference") === "enabled"
+  },
+
+  // Track if notification prompt has been shown
+  setPromptShown() {
+    localStorage.setItem("notification_prompt_shown", "true")
+  },
+
+  // Check if notification prompt has been shown
+  wasPromptShown() {
+    return localStorage.getItem("notification_prompt_shown") === "true"
+  },
+
+  // Check if user is already subscribed to push notifications
+  async isSubscribed() {
+    if (!this.isSupported()) {
+      return false
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const subscription = await registration.pushManager.getSubscription()
+      return !!subscription
+    } catch (error) {
+      console.error("Error checking subscription status:", error)
+      return false
+    }
+  },
+
+  // Add this new method after isSubscribed() to check both permission and subscription status
+  async isNotificationActive() {
+    // First check if notifications are supported
+    if (!this.isSupported()) {
+      return false
+    }
+
+    // Check browser permission status
+    const permissionStatus = Notification.permission
+
+    // If permission is denied, notifications can't be active
+    if (permissionStatus === "denied") {
+      return false
+    }
+
+    // If permission is granted, check if there's an active subscription
+    if (permissionStatus === "granted") {
+      // Check if user has a subscription
+      const isSubscribed = await this.isSubscribed()
+
+      // Also check user's stored preference
+      const userPreference = this.getNotificationPreference()
+
+      // Consider notifications active if either subscribed or user preference is enabled
+      return isSubscribed || userPreference
+    }
+
+    // Default: not active if permission is in default state or any other case
+    return false
+  },
+
+  // Request push notification permission and subscribe
+  async requestPermissionAndSubscribe() {
+    if (!this.isSupported()) {
+      return {
+        success: false,
+        message: "Push notifications not supported in this browser",
+      }
+    }
+
+    try {
+      // Request permission
+      const permission = await Notification.requestPermission()
+      if (permission !== "granted") {
+        return { success: false, message: "Notification permission denied" }
+      }
+
+      // Make sure service worker is ready
+      let registration
+      try {
+        registration = await navigator.serviceWorker.ready
+      } catch (error) {
+        // If service worker is not ready, try registering it again
+        registration = await this.registerServiceWorker()
+        if (!registration) {
+          throw new Error("Could not register service worker")
+        }
+        // Wait for the service worker to be ready
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
+
+      // Get existing subscription or create new one with error handling
+      let subscription
+      try {
+        subscription = await registration.pushManager.getSubscription()
+
+        if (!subscription) {
+          // Create new subscription with proper error handling
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: this.urlBase64ToUint8Array(this.VAPID_PUBLIC_KEY),
+          })
+        }
+      } catch (subscribeError) {
+        // Log the error but don't show it to the user if it's an AbortError
+        if (subscribeError.name === "AbortError") {
+          console.warn("Non-critical error subscribing to push notifications:", subscribeError)
+
+          // Even though push registration failed, we'll still mark notifications as enabled
+          // since the user granted permission
+          this.setNotificationPreference(true)
+          return {
+            success: true,
+            message: "Successfully subscribed to push notifications",
+          }
+        }
+
+        console.error("Error subscribing to push notifications:", subscribeError)
+
+        if (subscribeError.name === "NotAllowedError") {
+          return {
+            success: false,
+            message: "Push notification permission was denied by the user or browser settings.",
+          }
+        }
+
+        return {
+          success: false,
+          message: `Subscription error: ${subscribeError.message || "Unknown error"}`,
+        }
+      }
+
+      // If we have a subscription, send it to the server
+      if (subscription) {
+        // Send subscription to server
+        const token = localStorage.getItem("token")
+        if (!token) {
+          return { success: false, message: "Authentication required" }
+        }
+
+        try {
+          const subscriptionData = subscription.toJSON()
+          const response = await fetch(`${CONFIG.BASE_URL}/notifications/subscribe`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              endpoint: subscriptionData.endpoint,
+              keys: {
+                p256dh: subscriptionData.keys.p256dh,
+                auth: subscriptionData.keys.auth,
+              },
+            }),
+          })
+
+          const responseData = await response.json()
+
+          if (responseData.error) {
+            throw new Error(responseData.message || "Failed to subscribe")
+          }
+
+          // Set user preference
+          this.setNotificationPreference(true)
+
+          return {
+            success: true,
+            subscription,
+            message: "Successfully subscribed to push notifications",
+          }
+        } catch (apiError) {
+          console.error("API error when subscribing:", apiError)
+          return {
+            success: false,
+            message: apiError.message || "Server error when subscribing",
+          }
+        }
+      } else {
+        return {
+          success: false,
+          message: "Could not create push subscription",
+        }
+      }
+    } catch (error) {
+      console.error("Error in push notification flow:", error)
+
+      // If the user granted permission but we had a technical error,
+      // still enable notifications locally
+      if (Notification.permission === "granted") {
+        this.setNotificationPreference(true)
+        return {
+          success: true,
+          message: "Notifications enabled",
+        }
+      }
+
+      return {
+        success: false,
+        message: error.message || "Failed to subscribe to push notifications",
+      }
+    }
+  },
+
+  // Unsubscribe from push notifications
+  async unsubscribe() {
+    if (!this.isSupported()) {
+      return { success: false, message: "Push notifications not supported" }
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const subscription = await registration.pushManager.getSubscription()
+
+      if (!subscription) {
+        // If no subscription exists, just update the preference
+        this.setNotificationPreference(false)
+        return { success: true, message: "No active subscription found" }
+      }
+
+      // Store endpoint before unsubscribing locally
+      const endpoint = subscription.endpoint
+
+      // Unsubscribe locally first
+      const unsubscribeResult = await subscription.unsubscribe()
+
+      if (!unsubscribeResult) {
+        return { success: false, message: "Failed to unsubscribe locally" }
+      }
+
+      // Then call the API to unsubscribe
+      const token = localStorage.getItem("token")
+      if (!token) {
+        // Still consider it a success since we unsubscribed locally
+        this.setNotificationPreference(false)
+        return { success: true, message: "Unsubscribed locally only (not logged in)" }
+      }
+
+      const response = await fetch(`${CONFIG.BASE_URL}/notifications/subscribe`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          endpoint: endpoint,
+        }),
+      })
+
+      const responseData = await response.json()
+
+      if (responseData.error) {
+        // If API call fails, we still unsubscribed locally, so consider it partially successful
+        console.warn("API unsubscribe failed, but local unsubscribe succeeded")
+      }
+
+      // Update preference
+      this.setNotificationPreference(false)
+
+      return {
+        success: true,
+        message: "Successfully unsubscribed from push notifications",
+      }
+    } catch (error) {
+      console.error("Error unsubscribing from push notifications:", error)
+      return {
+        success: false,
+        message: error.message || "Failed to unsubscribe from push notifications",
+      }
+    }
+  },
+
+  // Show a local notification (for testing or when push fails)
+  async showLocalNotification(title, options = {}) {
+    if (!this.isSupported()) {
+      console.error("Notifications not supported")
+      return false
+    }
+
+    if (Notification.permission !== "granted") {
+      console.error("Notification permission not granted")
+      return false
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+
+      // Default options
+      const defaultOptions = {
+        body: "You have a new notification",
+        icon: "/favicon.png",
+        badge: "/favicon.png",
+        vibrate: [100, 50, 100],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: Math.random().toString(36).substring(2, 15),
+        },
+      }
+
+      // Merge default options with provided options
+      const notificationOptions = { ...defaultOptions, ...options }
+
+      // Show the notification
+      await registration.showNotification(title, notificationOptions)
+      return true
+    } catch (error) {
+      console.error("Error showing local notification:", error)
+      return false
+    }
+  },
+
+  // Send a notification for a new story
+  async notifyNewStory(storyData) {
+    if (!this.isSupported() || !this.getNotificationPreference()) {
+      return false
+    }
+
+    try {
+      // Extract story details
+      const { name, description, photoUrl } = storyData
+
+      // Create notification options
+      const options = {
+        body: description
+          ? description.length > 100
+            ? description.substring(0, 97) + "..."
+            : description
+          : "A new story has been published!",
+        icon: photoUrl || "/favicon.png",
+        badge: "/favicon.png",
+        vibrate: [100, 50, 100],
+        data: {
+          // Link to the general stories page
+          url: `/#/story`,
+          storyId: storyData.id, // Keep the ID for other purposes if needed
+          dateOfArrival: Date.now(),
+        },
+        actions: [
+          {
+            action: "view",
+            title: "View Story",
+          },
+          {
+            action: "close",
+            title: "Close",
+          },
+        ],
+      }
+
+      // Show the notification
+      const title = `New Story${name ? " from " + name : ""}`
+      return await this.showLocalNotification(title, options)
+    } catch (error) {
+      console.error("Error sending story notification:", error)
+      return false
+    }
+  },
+}
+
+export default PushNotification
+
+
+--- File: STUDENT.txt ---
+APP_URL=http://localhost:5173/
+MAP_SERVICE_API_KEY=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g
+
+--- File: vite.config.js ---
+import { defineConfig } from "vite";
+import { resolve } from "path";
+import fs from "fs";
+import path from "path";
+
+export default defineConfig({
+  root: resolve(__dirname, "src"),
+  publicDir: resolve(__dirname, "src", "public"), // Pastikan ini sesuai
+  build: {
+    outDir: resolve(__dirname, "dist"),
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "src", "index.html"),
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
+  plugins: [
+    {
+      name: "copy-service-worker",
+      writeBundle() {
+        const srcSwPath = resolve(__dirname, "src", "scripts", "sw.js");
+        const destSwPath = resolve(__dirname, "dist", "sw.js");
+
+        if (fs.existsSync(srcSwPath)) {
+          const swDir = path.dirname(destSwPath);
+          if (!fs.existsSync(swDir)) {
+            fs.mkdirSync(swDir, { recursive: true });
+          }
+          fs.copyFileSync(srcSwPath, destSwPath);
+          console.log("Service worker copied to build output directory");
+        }
+      },
+    },
+  ],
+});
+

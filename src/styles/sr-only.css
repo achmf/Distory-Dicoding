@@ -1,0 +1,26 @@
+/* Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Improved focus styles for keyboard navigation */
+  a:focus, button:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+  
+  /* Improved focus visibility for story cards */
+  .story-card:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
