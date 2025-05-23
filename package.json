@@ -1,5 +1,6 @@
 {
   "name": "starter-project-with-vite",
+  "homepage": "https://github.com/achmf/Distory-Dicoding",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "predeploy": "npm run build && vite build",
     "deploy": "gh-pages -d dist"
   },
   "devDependencies": {

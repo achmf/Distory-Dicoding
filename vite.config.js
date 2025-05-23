@@ -38,5 +38,5 @@ export default defineConfig({
       },
     },
   ],
-  base: "/Distory-Dicoding/", // Set this to your GitHub repository name
+  base: "/Distory-Dicoding", // Set this to your GitHub repository name
 });
