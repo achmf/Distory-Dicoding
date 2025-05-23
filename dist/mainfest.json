@@ -1,0 +1,9 @@
+{
+  "name": "Distory",
+  "short_name": "Distory",
+  "description": "A story posting app with location integration",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3f51b5"
+}
