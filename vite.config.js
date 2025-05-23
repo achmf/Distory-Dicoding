@@ -5,7 +5,7 @@ import path from "path";
 
 export default defineConfig({
   root: resolve(__dirname, "src"),
-  publicDir: resolve(__dirname, "src", "public"), // Pastikan ini sesuai
+  publicDir: resolve(__dirname, "src", "public"), // Ensure this is correct
   build: {
     outDir: resolve(__dirname, "dist"),
     emptyOutDir: true,
@@ -38,4 +38,5 @@ export default defineConfig({
       },
     },
   ],
+  base: "/Distory-Dicoding/", // Set this to your GitHub repository name
 });
