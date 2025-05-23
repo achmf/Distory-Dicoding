@@ -4,14 +4,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/Distory-Dicoding/book.png" />
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json" />
     <title>Distory</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g&callback=initMap" async defer></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g&callback=initMap"
+      async
+      defer
+    ></script>
+    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-DsQQEGLt.js"></script>
     <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-BmKLNXQ7.css">
   </head>
   <body>
     <!-- Skip to Content Button (Initially hidden) -->
-    <button id="skip-to-content" class="skip-to-content sr-only">Skip to Main Content</button>
+    <button id="skip-to-content" class="skip-to-content sr-only">
+      Skip to Main Content
+    </button>
 
     <!-- Loading Overlay (Initially hidden) -->
     <div id="loading-overlay">
@@ -54,14 +61,18 @@
 
     <!-- Register Service Worker -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
             .then((registration) => {
-              console.log('Service Worker registered with scope:', registration.scope);
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
             })
             .catch((error) => {
-              console.error('Service Worker registration failed:', error);
+              console.error("Service Worker registration failed:", error);
             });
         });
       }
