@@ -16,6 +16,7 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "google-maps": "^4.3.3",
     "leaflet": "^1.9.4",
     "sweetalert2": "^11.19.1"
   }
