@@ -3,16 +3,18 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/Distory-Dicoding/book.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <!-- Fix icon path for GitHub Pages -->
+    <link rel="icon" href="./book.png" />
+    <!-- Fix manifest path for GitHub Pages -->
+    <link rel="manifest" href="./manifest.json" />
     <title>Distory</title>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g&callback=initMap"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g"
       async
       defer
     ></script>
-    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-DsQQEGLt.js"></script>
-    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-BmKLNXQ7.css">
+    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-Dv3R2-WA.js"></script>
+    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-C4vqNOvj.css">
   </head>
   <body>
     <!-- Skip to Content Button (Initially hidden) -->
@@ -59,12 +61,15 @@
     <!-- Main Content Area -->
     <main id="main-content" class="main-content" tabindex="-1"></main>
 
-    <!-- Register Service Worker -->
+    <!-- Register Service Worker with correct path -->
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
+          // Use relative path for GitHub Pages
+          const swPath = import.meta.env.DEV ? "/sw.js" : "./sw.js";
+          
           navigator.serviceWorker
-            .register("/sw.js")
+            .register(swPath)
             .then((registration) => {
               console.log(
                 "Service Worker registered with scope:",
