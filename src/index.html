@@ -4,8 +4,6 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="./book.png" />
-    <!-- PWA Manifest - Fixed path for GitHub Pages -->
-    <link rel="manifest" href="/Distory-Dicoding/manifest.json" />
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3f51b5" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -21,9 +19,9 @@
       onload="if(window.initMap) window.initMap()"
       onerror="console.error('Google Maps failed to load')"
     ></script>
-    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-Dv3R2-WA.js"></script>
-    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-C4vqNOvj.css">
-  </head>
+    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-DiF6UmHX.js"></script>
+    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-Bk__b5F_.css">
+  <link rel="manifest" href="/Distory-Dicoding/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Distory-Dicoding/registerSW.js"></script></head>
   <body>
     <!-- Skip to Content Button (Initially hidden) -->
     <button id="skip-to-content" class="skip-to-content sr-only">
@@ -42,6 +40,17 @@
         <div class="install-actions">
           <button id="install-btn" class="install-btn">Install</button>
           <button id="dismiss-install" class="dismiss-btn">×</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA Update Banner -->
+    <div id="update-banner" class="update-banner" style="display: none;">
+      <div class="update-banner-content">
+        <span class="update-text">New version available!</span>
+        <div class="update-actions">
+          <button id="update-btn" class="update-btn">Update</button>
+          <button id="dismiss-update" class="dismiss-btn">×</button>
         </div>
       </div>
     </div>
@@ -80,75 +89,6 @@
     <!-- Main Content Area -->
     <main id="main-content" class="main-content" tabindex="-1"></main>
 
-    <!-- PWA and Service Worker Registration -->
-    <script>
-      // PWA Install functionality
-      let deferredPrompt;
-      const installBanner = document.getElementById('install-banner');
-      const installBtn = document.getElementById('install-btn');
-      const dismissBtn = document.getElementById('dismiss-install');
-
-      // Listen for beforeinstallprompt event
-      window.addEventListener('beforeinstallprompt', (e) => {
-        console.log('PWA install prompt available');
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // Show install banner if user hasn't dismissed it
-        if (!localStorage.getItem('pwa-install-dismissed')) {
-          installBanner.style.display = 'block';
-        }
-      });
-
-      // Handle install button click
-      if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install prompt: ${outcome}`);
-            deferredPrompt = null;
-            installBanner.style.display = 'none';
-          }
-        });
-      }
-
-      // Handle dismiss button click
-      if (dismissBtn) {
-        dismissBtn.addEventListener('click', () => {
-          installBanner.style.display = 'none';
-          localStorage.setItem('pwa-install-dismissed', 'true');
-        });
-      }
-
-      // Listen for app installed event
-      window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
-        installBanner.style.display = 'none';
-        deferredPrompt = null;
-      });
-
-      // Register Service Worker with correct path -->
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          // Use correct path for GitHub Pages deployment
-          const swPath = "/Distory-Dicoding/sw.js";
-          
-          navigator.serviceWorker
-            .register(swPath)
-            .then((registration) => {
-              console.log("Service Worker registered with scope:", registration.scope);
-              
-              // Check for updates
-              registration.addEventListener('updatefound', () => {
-                console.log('New service worker version available');
-              });
-            })
-            .catch((error) => {
-              console.error("Service Worker registration failed:", error);
-            });
-        });
-      }
-    </script>
+    <!-- Workbox PWA functionality will be injected here automatically -->
   </body>
 </html>
