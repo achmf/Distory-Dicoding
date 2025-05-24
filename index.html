@@ -3,15 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Fix icon path for GitHub Pages -->
     <link rel="icon" href="./book.png" />
-    <!-- Fix manifest path for GitHub Pages -->
-    <link rel="manifest" href="./manifest.json" />
+    <!-- PWA Manifest - Fixed path for GitHub Pages -->
+    <link rel="manifest" href="/Distory-Dicoding/manifest.json" />
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3f51b5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Distory" />
+    <link rel="apple-touch-icon" href="./book.png" />
     <title>Distory</title>
+    <!-- Google Maps API -->
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g"
       async
       defer
+      onload="if(window.initMap) window.initMap()"
+      onerror="console.error('Google Maps failed to load')"
     ></script>
     <script type="module" crossorigin src="/Distory-Dicoding/assets/main-Dv3R2-WA.js"></script>
     <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-C4vqNOvj.css">
@@ -25,6 +33,17 @@
     <!-- Loading Overlay (Initially hidden) -->
     <div id="loading-overlay">
       <div id="loading-spinner"></div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div id="install-banner" class="install-banner" style="display: none;">
+      <div class="install-banner-content">
+        <span class="install-text">Install Distory app for better experience!</span>
+        <div class="install-actions">
+          <button id="install-btn" class="install-btn">Install</button>
+          <button id="dismiss-install" class="dismiss-btn">×</button>
+        </div>
+      </div>
     </div>
 
     <header>
@@ -61,20 +80,69 @@
     <!-- Main Content Area -->
     <main id="main-content" class="main-content" tabindex="-1"></main>
 
-    <!-- Register Service Worker with correct path -->
+    <!-- PWA and Service Worker Registration -->
     <script>
+      // PWA Install functionality
+      let deferredPrompt;
+      const installBanner = document.getElementById('install-banner');
+      const installBtn = document.getElementById('install-btn');
+      const dismissBtn = document.getElementById('dismiss-install');
+
+      // Listen for beforeinstallprompt event
+      window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('PWA install prompt available');
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Show install banner if user hasn't dismissed it
+        if (!localStorage.getItem('pwa-install-dismissed')) {
+          installBanner.style.display = 'block';
+        }
+      });
+
+      // Handle install button click
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to install prompt: ${outcome}`);
+            deferredPrompt = null;
+            installBanner.style.display = 'none';
+          }
+        });
+      }
+
+      // Handle dismiss button click
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', () => {
+          installBanner.style.display = 'none';
+          localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+      }
+
+      // Listen for app installed event
+      window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        installBanner.style.display = 'none';
+        deferredPrompt = null;
+      });
+
+      // Register Service Worker with correct path -->
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          // Use relative path for GitHub Pages
-          const swPath = import.meta.env.DEV ? "/sw.js" : "./sw.js";
+          // Use correct path for GitHub Pages deployment
+          const swPath = "/Distory-Dicoding/sw.js";
           
           navigator.serviceWorker
             .register(swPath)
             .then((registration) => {
-              console.log(
-                "Service Worker registered with scope:",
-                registration.scope
-              );
+              console.log("Service Worker registered with scope:", registration.scope);
+              
+              // Check for updates
+              registration.addEventListener('updatefound', () => {
+                console.log('New service worker version available');
+              });
             })
             .catch((error) => {
               console.error("Service Worker registration failed:", error);

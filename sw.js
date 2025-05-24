@@ -1,9 +1,9 @@
 // Service Worker for PWA functionality
 const CACHE_NAME = "distory-pwa-v1"
-const OFFLINE_URL = "./offline.html"
+const OFFLINE_URL = "/Distory-Dicoding/offline.html"
 
 // Get the base path for GitHub Pages
-const basePath = self.location.pathname.replace("/sw.js", "")
+const basePath = "/Distory-Dicoding"
 
 // Assets to cache for offline functionality
 const staticAssets = [
@@ -68,15 +68,15 @@ self.addEventListener("push", (event) => {
     title: "Distory Notification",
     options: {
       body: "You have a new notification",
-      icon: "./book.png",
-      badge: "./book.png",
+      icon: basePath + "/book.png",
+      badge: basePath + "/book.png",
       tag: "distory-notification",
       requireInteraction: false,
       actions: [
         {
           action: "view",
           title: "View Stories",
-          icon: "./book.png",
+          icon: basePath + "/book.png",
         },
         {
           action: "dismiss",
