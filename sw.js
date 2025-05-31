@@ -1,2 +1,212 @@
-try{self["workbox:core:7.2.0"]&&_()}catch{}const E=(n,...e)=>{let t=n;return e.length>0&&(t+=` :: ${JSON.stringify(e)}`),t},O=E;class l extends Error{constructor(e,t){const s=O(e,t);super(s),this.name=e,this.details=t}}const f={googleAnalytics:"googleAnalytics",precache:"precache-v2",prefix:"workbox",runtime:"runtime",suffix:typeof registration<"u"?registration.scope:""},P=n=>[f.prefix,n,f.suffix].filter(e=>e&&e.length>0).join("-"),D=n=>{for(const e of Object.keys(f))n(e)},C={updateDetails:n=>{D(e=>{typeof n[e]=="string"&&(f[e]=n[e])})},getGoogleAnalyticsName:n=>n||P(f.googleAnalytics),getPrecacheName:n=>n||P(f.precache),getPrefix:()=>f.prefix,getRuntimeName:n=>n||P(f.runtime),getSuffix:()=>f.suffix};function x(n,e){const t=e();return n.waitUntil(t),t}try{self["workbox:precaching:7.2.0"]&&_()}catch{}const I="__WB_REVISION__";function W(n){if(!n)throw new l("add-to-cache-list-unexpected-type",{entry:n});if(typeof n=="string"){const i=new URL(n,location.href);return{cacheKey:i.href,url:i.href}}const{revision:e,url:t}=n;if(!t)throw new l("add-to-cache-list-unexpected-type",{entry:n});if(!e){const i=new URL(t,location.href);return{cacheKey:i.href,url:i.href}}const s=new URL(t,location.href),r=new URL(t,location.href);return s.searchParams.set(I,e),{cacheKey:s.href,url:r.href}}class M{constructor(){this.updatedURLs=[],this.notUpdatedURLs=[],this.handlerWillStart=async({request:e,state:t})=>{t&&(t.originalRequest=e)},this.cachedResponseWillBeUsed=async({event:e,state:t,cachedResponse:s})=>{if(e.type==="install"&&t&&t.originalRequest&&t.originalRequest instanceof Request){const r=t.originalRequest.url;s?this.notUpdatedURLs.push(r):this.updatedURLs.push(r)}return s}}}class A{constructor({precacheController:e}){this.cacheKeyWillBeUsed=async({request:t,params:s})=>{const r=(s==null?void 0:s.cacheKey)||this._precacheController.getCacheKeyForURL(t.url);return r?new Request(r,{headers:t.headers}):t},this._precacheController=e}}let w;function j(){if(w===void 0){const n=new Response("");if("body"in n)try{new Response(n.body),w=!0}catch{w=!1}w=!1}return w}async function F(n,e){let t=null;if(n.url&&(t=new URL(n.url).origin),t!==self.location.origin)throw new l("cross-origin-copy-response",{origin:t});const s=n.clone(),i={headers:new Headers(s.headers),status:s.status,statusText:s.statusText},o=j()?s.body:await s.blob();return new Response(o,i)}const H=n=>new URL(String(n),location.href).href.replace(new RegExp(`^${location.origin}`),"");function v(n,e){const t=new URL(n);for(const s of e)t.searchParams.delete(s);return t.href}async function q(n,e,t,s){const r=v(e.url,t);if(e.url===r)return n.match(e,s);const i=Object.assign(Object.assign({},s),{ignoreSearch:!0}),o=await n.keys(e,i);for(const a of o){const c=v(a.url,t);if(r===c)return n.match(a,s)}}class B{constructor(){this.promise=new Promise((e,t)=>{this.resolve=e,this.reject=t})}}const $=new Set;async function z(){for(const n of $)await n()}function N(n){return new Promise(e=>setTimeout(e,n))}try{self["workbox:strategies:7.2.0"]&&_()}catch{}function R(n){return typeof n=="string"?new Request(n):n}class G{constructor(e,t){this._cacheKeys={},Object.assign(this,t),this.event=t.event,this._strategy=e,this._handlerDeferred=new B,this._extendLifetimePromises=[],this._plugins=[...e.plugins],this._pluginStateMap=new Map;for(const s of this._plugins)this._pluginStateMap.set(s,{});this.event.waitUntil(this._handlerDeferred.promise)}async fetch(e){const{event:t}=this;let s=R(e);if(s.mode==="navigate"&&t instanceof FetchEvent&&t.preloadResponse){const o=await t.preloadResponse;if(o)return o}const r=this.hasCallback("fetchDidFail")?s.clone():null;try{for(const o of this.iterateCallbacks("requestWillFetch"))s=await o({request:s.clone(),event:t})}catch(o){if(o instanceof Error)throw new l("plugin-error-request-will-fetch",{thrownErrorMessage:o.message})}const i=s.clone();try{let o;o=await fetch(s,s.mode==="navigate"?void 0:this._strategy.fetchOptions);for(const a of this.iterateCallbacks("fetchDidSucceed"))o=await a({event:t,request:i,response:o});return o}catch(o){throw r&&await this.runCallbacks("fetchDidFail",{error:o,event:t,originalRequest:r.clone(),request:i.clone()}),o}}async fetchAndCachePut(e){const t=await this.fetch(e),s=t.clone();return this.waitUntil(this.cachePut(e,s)),t}async cacheMatch(e){const t=R(e);let s;const{cacheName:r,matchOptions:i}=this._strategy,o=await this.getCacheKey(t,"read"),a=Object.assign(Object.assign({},i),{cacheName:r});s=await caches.match(o,a);for(const c of this.iterateCallbacks("cachedResponseWillBeUsed"))s=await c({cacheName:r,matchOptions:i,cachedResponse:s,request:o,event:this.event})||void 0;return s}async cachePut(e,t){const s=R(e);await N(0);const r=await this.getCacheKey(s,"write");if(!t)throw new l("cache-put-with-no-response",{url:H(r.url)});const i=await this._ensureResponseSafeToCache(t);if(!i)return!1;const{cacheName:o,matchOptions:a}=this._strategy,c=await self.caches.open(o),h=this.hasCallback("cacheDidUpdate"),g=h?await q(c,r.clone(),["__WB_REVISION__"],a):null;try{await c.put(r,h?i.clone():i)}catch(u){if(u instanceof Error)throw u.name==="QuotaExceededError"&&await z(),u}for(const u of this.iterateCallbacks("cacheDidUpdate"))await u({cacheName:o,oldResponse:g,newResponse:i.clone(),request:r,event:this.event});return!0}async getCacheKey(e,t){const s=`${e.url} | ${t}`;if(!this._cacheKeys[s]){let r=e;for(const i of this.iterateCallbacks("cacheKeyWillBeUsed"))r=R(await i({mode:t,request:r,event:this.event,params:this.params}));this._cacheKeys[s]=r}return this._cacheKeys[s]}hasCallback(e){for(const t of this._strategy.plugins)if(e in t)return!0;return!1}async runCallbacks(e,t){for(const s of this.iterateCallbacks(e))await s(t)}*iterateCallbacks(e){for(const t of this._strategy.plugins)if(typeof t[e]=="function"){const s=this._pluginStateMap.get(t);yield i=>{const o=Object.assign(Object.assign({},i),{state:s});return t[e](o)}}}waitUntil(e){return this._extendLifetimePromises.push(e),e}async doneWaiting(){let e;for(;e=this._extendLifetimePromises.shift();)await e}destroy(){this._handlerDeferred.resolve(null)}async _ensureResponseSafeToCache(e){let t=e,s=!1;for(const r of this.iterateCallbacks("cacheWillUpdate"))if(t=await r({request:this.request,response:t,event:this.event})||void 0,s=!0,!t)break;return s||t&&t.status!==200&&(t=void 0),t}}class k{constructor(e={}){this.cacheName=C.getRuntimeName(e.cacheName),this.plugins=e.plugins||[],this.fetchOptions=e.fetchOptions,this.matchOptions=e.matchOptions}handle(e){const[t]=this.handleAll(e);return t}handleAll(e){e instanceof FetchEvent&&(e={event:e,request:e.request});const t=e.event,s=typeof e.request=="string"?new Request(e.request):e.request,r="params"in e?e.params:void 0,i=new G(this,{event:t,request:s,params:r}),o=this._getResponse(i,s,t),a=this._awaitComplete(o,i,s,t);return[o,a]}async _getResponse(e,t,s){await e.runCallbacks("handlerWillStart",{event:s,request:t});let r;try{if(r=await this._handle(t,e),!r||r.type==="error")throw new l("no-response",{url:t.url})}catch(i){if(i instanceof Error){for(const o of e.iterateCallbacks("handlerDidError"))if(r=await o({error:i,event:s,request:t}),r)break}if(!r)throw i}for(const i of e.iterateCallbacks("handlerWillRespond"))r=await i({event:s,request:t,response:r});return r}async _awaitComplete(e,t,s,r){let i,o;try{i=await e}catch{}try{await t.runCallbacks("handlerDidRespond",{event:r,request:s,response:i}),await t.doneWaiting()}catch(a){a instanceof Error&&(o=a)}if(await t.runCallbacks("handlerDidComplete",{event:r,request:s,response:i,error:o}),t.destroy(),o)throw o}}class d extends k{constructor(e={}){e.cacheName=C.getPrecacheName(e.cacheName),super(e),this._fallbackToNetwork=e.fallbackToNetwork!==!1,this.plugins.push(d.copyRedirectedCacheableResponsesPlugin)}async _handle(e,t){const s=await t.cacheMatch(e);return s||(t.event&&t.event.type==="install"?await this._handleInstall(e,t):await this._handleFetch(e,t))}async _handleFetch(e,t){let s;const r=t.params||{};if(this._fallbackToNetwork){const i=r.integrity,o=e.integrity,a=!o||o===i;s=await t.fetch(new Request(e,{integrity:e.mode!=="no-cors"?o||i:void 0})),i&&a&&e.mode!=="no-cors"&&(this._useDefaultCacheabilityPluginIfNeeded(),await t.cachePut(e,s.clone()))}else throw new l("missing-precache-entry",{cacheName:this.cacheName,url:e.url});return s}async _handleInstall(e,t){this._useDefaultCacheabilityPluginIfNeeded();const s=await t.fetch(e);if(!await t.cachePut(e,s.clone()))throw new l("bad-precaching-response",{url:e.url,status:s.status});return s}_useDefaultCacheabilityPluginIfNeeded(){let e=null,t=0;for(const[s,r]of this.plugins.entries())r!==d.copyRedirectedCacheableResponsesPlugin&&(r===d.defaultPrecacheCacheabilityPlugin&&(e=s),r.cacheWillUpdate&&t++);t===0?this.plugins.push(d.defaultPrecacheCacheabilityPlugin):t>1&&e!==null&&this.plugins.splice(e,1)}}d.defaultPrecacheCacheabilityPlugin={async cacheWillUpdate({response:n}){return!n||n.status>=400?null:n}};d.copyRedirectedCacheableResponsesPlugin={async cacheWillUpdate({response:n}){return n.redirected?await F(n):n}};class V{constructor({cacheName:e,plugins:t=[],fallbackToNetwork:s=!0}={}){this._urlsToCacheKeys=new Map,this._urlsToCacheModes=new Map,this._cacheKeysToIntegrities=new Map,this._strategy=new d({cacheName:C.getPrecacheName(e),plugins:[...t,new A({precacheController:this})],fallbackToNetwork:s}),this.install=this.install.bind(this),this.activate=this.activate.bind(this)}get strategy(){return this._strategy}precache(e){this.addToCacheList(e),this._installAndActiveListenersAdded||(self.addEventListener("install",this.install),self.addEventListener("activate",this.activate),this._installAndActiveListenersAdded=!0)}addToCacheList(e){const t=[];for(const s of e){typeof s=="string"?t.push(s):s&&s.revision===void 0&&t.push(s.url);const{cacheKey:r,url:i}=W(s),o=typeof s!="string"&&s.revision?"reload":"default";if(this._urlsToCacheKeys.has(i)&&this._urlsToCacheKeys.get(i)!==r)throw new l("add-to-cache-list-conflicting-entries",{firstEntry:this._urlsToCacheKeys.get(i),secondEntry:r});if(typeof s!="string"&&s.integrity){if(this._cacheKeysToIntegrities.has(r)&&this._cacheKeysToIntegrities.get(r)!==s.integrity)throw new l("add-to-cache-list-conflicting-integrities",{url:i});this._cacheKeysToIntegrities.set(r,s.integrity)}if(this._urlsToCacheKeys.set(i,r),this._urlsToCacheModes.set(i,o),t.length>0){const a=`Workbox is precaching URLs without revision info: ${t.join(", ")}
-This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;console.warn(a)}}}install(e){return x(e,async()=>{const t=new M;this.strategy.plugins.push(t);for(const[i,o]of this._urlsToCacheKeys){const a=this._cacheKeysToIntegrities.get(o),c=this._urlsToCacheModes.get(i),h=new Request(i,{integrity:a,cache:c,credentials:"same-origin"});await Promise.all(this.strategy.handleAll({params:{cacheKey:o},request:h,event:e}))}const{updatedURLs:s,notUpdatedURLs:r}=t;return{updatedURLs:s,notUpdatedURLs:r}})}activate(e){return x(e,async()=>{const t=await self.caches.open(this.strategy.cacheName),s=await t.keys(),r=new Set(this._urlsToCacheKeys.values()),i=[];for(const o of s)r.has(o.url)||(await t.delete(o),i.push(o.url));return{deletedURLs:i}})}getURLsToCacheKeys(){return this._urlsToCacheKeys}getCachedURLs(){return[...this._urlsToCacheKeys.keys()]}getCacheKeyForURL(e){const t=new URL(e,location.href);return this._urlsToCacheKeys.get(t.href)}getIntegrityForCacheKey(e){return this._cacheKeysToIntegrities.get(e)}async matchPrecache(e){const t=e instanceof Request?e.url:e,s=this.getCacheKeyForURL(t);if(s)return(await self.caches.open(this.strategy.cacheName)).match(s)}createHandlerBoundToURL(e){const t=this.getCacheKeyForURL(e);if(!t)throw new l("non-precached-url",{url:e});return s=>(s.request=new Request(e),s.params=Object.assign({cacheKey:t},s.params),this.strategy.handle(s))}}let T;const S=()=>(T||(T=new V),T);try{self["workbox:routing:7.2.0"]&&_()}catch{}const K="GET",b=n=>n&&typeof n=="object"?n:{handle:n};class m{constructor(e,t,s=K){this.handler=b(t),this.match=e,this.method=s}setCatchHandler(e){this.catchHandler=b(e)}}class J extends m{constructor(e,t,s){const r=({url:i})=>{const o=e.exec(i.href);if(o&&!(i.origin!==location.origin&&o.index!==0))return o.slice(1)};super(r,t,s)}}class Q{constructor(){this._routes=new Map,this._defaultHandlerMap=new Map}get routes(){return this._routes}addFetchListener(){self.addEventListener("fetch",e=>{const{request:t}=e,s=this.handleRequest({request:t,event:e});s&&e.respondWith(s)})}addCacheListener(){self.addEventListener("message",e=>{if(e.data&&e.data.type==="CACHE_URLS"){const{payload:t}=e.data,s=Promise.all(t.urlsToCache.map(r=>{typeof r=="string"&&(r=[r]);const i=new Request(...r);return this.handleRequest({request:i,event:e})}));e.waitUntil(s),e.ports&&e.ports[0]&&s.then(()=>e.ports[0].postMessage(!0))}})}handleRequest({request:e,event:t}){const s=new URL(e.url,location.href);if(!s.protocol.startsWith("http"))return;const r=s.origin===location.origin,{params:i,route:o}=this.findMatchingRoute({event:t,request:e,sameOrigin:r,url:s});let a=o&&o.handler;const c=e.method;if(!a&&this._defaultHandlerMap.has(c)&&(a=this._defaultHandlerMap.get(c)),!a)return;let h;try{h=a.handle({url:s,request:e,event:t,params:i})}catch(u){h=Promise.reject(u)}const g=o&&o.catchHandler;return h instanceof Promise&&(this._catchHandler||g)&&(h=h.catch(async u=>{if(g)try{return await g.handle({url:s,request:e,event:t,params:i})}catch(L){L instanceof Error&&(u=L)}if(this._catchHandler)return this._catchHandler.handle({url:s,request:e,event:t});throw u})),h}findMatchingRoute({url:e,sameOrigin:t,request:s,event:r}){const i=this._routes.get(s.method)||[];for(const o of i){let a;const c=o.match({url:e,sameOrigin:t,request:s,event:r});if(c)return a=c,(Array.isArray(a)&&a.length===0||c.constructor===Object&&Object.keys(c).length===0||typeof c=="boolean")&&(a=void 0),{route:o,params:a}}return{}}setDefaultHandler(e,t=K){this._defaultHandlerMap.set(t,b(e))}setCatchHandler(e){this._catchHandler=b(e)}registerRoute(e){this._routes.has(e.method)||this._routes.set(e.method,[]),this._routes.get(e.method).push(e)}unregisterRoute(e){if(!this._routes.has(e.method))throw new l("unregister-route-but-not-found-with-method",{method:e.method});const t=this._routes.get(e.method).indexOf(e);if(t>-1)this._routes.get(e.method).splice(t,1);else throw new l("unregister-route-route-not-registered")}}let y;const Y=()=>(y||(y=new Q,y.addFetchListener(),y.addCacheListener()),y);function U(n,e,t){let s;if(typeof n=="string"){const i=new URL(n,location.href),o=({url:a})=>a.href===i.href;s=new m(o,e,t)}else if(n instanceof RegExp)s=new J(n,e,t);else if(typeof n=="function")s=new m(n,e,t);else if(n instanceof m)s=n;else throw new l("unsupported-route-type",{moduleName:"workbox-routing",funcName:"registerRoute",paramName:"capture"});return Y().registerRoute(s),s}function X(n,e=[]){for(const t of[...n.searchParams.keys()])e.some(s=>s.test(t))&&n.searchParams.delete(t);return n}function*Z(n,{ignoreURLParametersMatching:e=[/^utm_/,/^fbclid$/],directoryIndex:t="index.html",cleanURLs:s=!0,urlManipulation:r}={}){const i=new URL(n,location.href);i.hash="",yield i.href;const o=X(i,e);if(yield o.href,t&&o.pathname.endsWith("/")){const a=new URL(o.href);a.pathname+=t,yield a.href}if(s){const a=new URL(o.href);a.pathname+=".html",yield a.href}if(r){const a=r({url:i});for(const c of a)yield c.href}}class ee extends m{constructor(e,t){const s=({request:r})=>{const i=e.getURLsToCacheKeys();for(const o of Z(r.url,t)){const a=i.get(o);if(a){const c=e.getIntegrityForCacheKey(a);return{cacheKey:a,integrity:c}}}};super(s,e.strategy)}}function te(n){const e=S(),t=new ee(e,n);U(t)}const se="-precache-",ne=async(n,e=se)=>{const s=(await self.caches.keys()).filter(r=>r.includes(e)&&r.includes(self.registration.scope)&&r!==n);return await Promise.all(s.map(r=>self.caches.delete(r))),s};function re(){self.addEventListener("activate",n=>{const e=C.getPrecacheName();n.waitUntil(ne(e).then(t=>{}))})}function ie(n){S().precache(n)}function oe(n,e){ie(n),te(e)}class ae extends k{async _handle(e,t){let s=await t.cacheMatch(e),r;if(!s)try{s=await t.fetchAndCachePut(e)}catch(i){i instanceof Error&&(r=i)}if(!s)throw new l("no-response",{url:e.url,error:r});return s}}const ce={cacheWillUpdate:async({response:n})=>n.status===200||n.status===0?n:null};class le extends k{constructor(e={}){super(e),this.plugins.some(t=>"cacheWillUpdate"in t)||this.plugins.unshift(ce),this._networkTimeoutSeconds=e.networkTimeoutSeconds||0}async _handle(e,t){const s=[],r=[];let i;if(this._networkTimeoutSeconds){const{id:c,promise:h}=this._getTimeoutPromise({request:e,logs:s,handler:t});i=c,r.push(h)}const o=this._getNetworkPromise({timeoutId:i,request:e,logs:s,handler:t});r.push(o);const a=await t.waitUntil((async()=>await t.waitUntil(Promise.race(r))||await o)());if(!a)throw new l("no-response",{url:e.url});return a}_getTimeoutPromise({request:e,logs:t,handler:s}){let r;return{promise:new Promise(o=>{r=setTimeout(async()=>{o(await s.cacheMatch(e))},this._networkTimeoutSeconds*1e3)}),id:r}}async _getNetworkPromise({timeoutId:e,request:t,logs:s,handler:r}){let i,o;try{o=await r.fetchAndCachePut(t)}catch(a){a instanceof Error&&(i=a)}return e&&clearTimeout(e),(i||!o)&&(o=await r.cacheMatch(t)),o}}class he extends k{constructor(e={}){super(e),this._networkTimeoutSeconds=e.networkTimeoutSeconds||0}async _handle(e,t){let s,r;try{const i=[t.fetch(e)];if(this._networkTimeoutSeconds){const o=N(this._networkTimeoutSeconds*1e3);i.push(o)}if(r=await Promise.race(i),!r)throw new Error(`Timed out the network response after ${this._networkTimeoutSeconds} seconds.`)}catch(i){i instanceof Error&&(s=i)}if(!r)throw new l("no-response",{url:e.url,error:s});return r}}re();oe([{"revision":null,"url":"assets/index-Bk__b5F_.css"},{"revision":null,"url":"assets/index-DeKi56d1.js"},{"revision":"ee2a382dff2b00d042108003b9bdbe70","url":"index.html"},{"revision":"040ea54698e8389a23fd5f1893a84900","url":"offline.html"},{"revision":"84d52ea7be159f6113dad3c365939dd6","url":"registerSW.js"},{"revision":"60fc6691e0400528c6240aeee3c0494c","url":"manifest.webmanifest"}]);const p="/Distory-Dicoding";self.addEventListener("fetch",n=>{const{request:e}=n,t=new URL(e.url);t.protocol==="chrome-extension:"||t.protocol==="moz-extension:"||t.protocol==="safari-extension:"||t.protocol==="ms-browser-extension:"||t.href.includes("gen_204")||t.href.includes("chrome-extension")||t.href.includes("moz-extension")||t.href.includes("safari-extension")||t.href.includes("ms-browser-extension")||t.href.includes("maps.googleapis.com/maps/api/mapsjs/gen_204")||e.method});U(({request:n,url:e})=>e.href.includes("chrome-extension")||e.href.includes("moz-extension")||e.href.includes("safari-extension")||e.href.includes("ms-browser-extension")?!1:n.destination==="image",new ae({cacheName:"images",plugins:[{cacheKeyWillBeUsed:async({request:n})=>n.url.includes("chrome-extension")||n.url.includes("moz-extension")||n.url.includes("safari-extension")||n.url.includes("ms-browser-extension")?null:n.url}]}));U(({url:n})=>n.origin==="https://dicoding-story-api.vercel.app",new le({cacheName:"api-cache",networkTimeoutSeconds:10}));U(({url:n})=>n.href.includes("maps.googleapis.com/maps/api/mapsjs/gen_204")||n.href.includes("chrome-extension")||n.href.includes("moz-extension")||n.href.includes("safari-extension")||n.href.includes("ms-browser-extension"),new he);self.addEventListener("push",n=>{console.log("Service Worker: Push received");let e={title:"Distory Notification",options:{body:"You have a new notification",icon:p+"/book.png",badge:p+"/book.png",tag:"distory-notification",requireInteraction:!1,actions:[{action:"view",title:"View Stories",icon:p+"/book.png"},{action:"dismiss",title:"Dismiss"}]}};try{if(n.data){const t=n.data.json();e={title:t.title||e.title,options:{...e.options,...t.options}}}}catch(t){console.error("Error parsing push data:",t)}n.waitUntil(self.registration.showNotification(e.title,e.options))});self.addEventListener("notificationclick",n=>{console.log("Service Worker: Notification click received"),n.notification.close();let e=p+"/";n.action==="view"?e=p+"/#/story":n.notification.data&&n.notification.data.url&&(e=n.notification.data.url),n.waitUntil(clients.matchAll({type:"window",includeUncontrolled:!0}).then(t=>{for(const s of t)if(s.url.includes(p)&&"focus"in s)return s.focus();if(clients.openWindow)return clients.openWindow(e)}))});self.addEventListener("sync",n=>{console.log("Service Worker: Background sync triggered",n.tag),n.tag==="sync-stories"&&n.waitUntil(ue())});async function ue(){try{console.log("Service Worker: Syncing offline stories...");const n=await fe(),s=await n.transaction(["stories"],"readonly").objectStore("stories").getAll();for(const r of s)try{(await fetch("https://dicoding-story-api.vercel.app/v1/stories",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${r.token}`},body:JSON.stringify({description:r.description,lat:r.lat,lon:r.lon,photo:r.photo})})).ok&&(await n.transaction(["stories"],"readwrite").objectStore("stories").delete(r.id),console.log(`Story ${r.id} synced successfully`))}catch(i){console.error(`Failed to sync story ${r.id}:`,i)}return Promise.resolve()}catch(n){throw console.error("Service Worker: Sync failed",n),n}}function fe(){return new Promise((n,e)=>{const t=indexedDB.open("DistoryDB",1);t.onerror=()=>e(t.error),t.onsuccess=()=>n(t.result),t.onupgradeneeded=s=>{const r=s.target.result;r.objectStoreNames.contains("stories")||r.createObjectStore("stories",{keyPath:"id"})}})}
+// Service Worker for PWA functionality
+const CACHE_NAME = "distory-pwa-v1"
+const OFFLINE_URL = "./offline.html"
+
+// Get the base path for GitHub Pages
+const basePath = self.location.pathname.replace("/sw.js", "")
+
+// Assets to cache for offline functionality
+const staticAssets = [
+  basePath + "/",
+  basePath + "/index.html",
+  basePath + "/manifest.json",
+  basePath + "/book.png",
+  // Add other critical assets
+]
+
+// This ensures the service worker activates immediately
+self.addEventListener("install", (event) => {
+  console.log("Service Worker: Installing...")
+
+  event.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("Service Worker: Caching essential resources")
+        return cache.addAll(staticAssets)
+      })
+      .then(() => {
+        console.log("Service Worker: Skip waiting")
+        return self.skipWaiting()
+      })
+      .catch((error) => {
+        console.error("Service Worker: Cache failed", error)
+      }),
+  )
+})
+
+// This ensures the service worker takes control immediately
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker: Activating...")
+
+  event.waitUntil(
+    Promise.all([
+      // Clean up old caches
+      caches
+        .keys()
+        .then((cacheNames) => {
+          return Promise.all(
+            cacheNames.map((cacheName) => {
+              if (cacheName !== CACHE_NAME) {
+                console.log("Service Worker: Deleting old cache", cacheName)
+                return caches.delete(cacheName)
+              }
+            }),
+          )
+        }),
+      // Take control of all clients
+      clients.claim(),
+    ]),
+  )
+})
+
+// Handle push events (notifications)
+self.addEventListener("push", (event) => {
+  console.log("Service Worker: Push received")
+
+  let notificationData = {
+    title: "Distory Notification",
+    options: {
+      body: "You have a new notification",
+      icon: "./book.png",
+      badge: "./book.png",
+      tag: "distory-notification",
+      requireInteraction: false,
+      actions: [
+        {
+          action: "view",
+          title: "View Stories",
+          icon: "./book.png",
+        },
+        {
+          action: "dismiss",
+          title: "Dismiss",
+        },
+      ],
+    },
+  }
+
+  try {
+    if (event.data) {
+      const pushData = event.data.json()
+      notificationData = {
+        title: pushData.title || notificationData.title,
+        options: {
+          ...notificationData.options,
+          ...pushData.options,
+        },
+      }
+    }
+  } catch (error) {
+    console.error("Error parsing push data:", error)
+  }
+
+  event.waitUntil(self.registration.showNotification(notificationData.title, notificationData.options))
+})
+
+// Handle notification click
+self.addEventListener("notificationclick", (event) => {
+  console.log("Service Worker: Notification click received")
+  event.notification.close()
+
+  let url = basePath + "/"
+
+  if (event.action === "view") {
+    url = basePath + "/#/story"
+  } else if (event.notification.data && event.notification.data.url) {
+    url = event.notification.data.url
+  }
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      // Check if there's already a window/tab open with the target URL
+      for (const client of windowClients) {
+        if (client.url.includes(basePath) && "focus" in client) {
+          return client.focus()
+        }
+      }
+
+      // If no window/tab is open, open a new one
+      if (clients.openWindow) {
+        return clients.openWindow(url)
+      }
+    }),
+  )
+})
+
+// Fetch event - serve cached content when offline
+self.addEventListener("fetch", (event) => {
+  // Skip Google Maps API requests from being cached
+  if (event.request.url.includes("maps.googleapis.com") || event.request.url.includes("maps.gstatic.com")) {
+    return
+  }
+
+  // Skip non-GET requests
+  if (event.request.method !== "GET") {
+    return
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      // Return cached version if available
+      if (cachedResponse) {
+        return cachedResponse
+      }
+
+      // Try to fetch from network
+      return fetch(event.request)
+        .then((response) => {
+          // Don't cache non-successful responses
+          if (!response || response.status !== 200 || response.type !== "basic") {
+            return response
+          }
+
+          // Clone the response for caching
+          const responseToCache = response.clone()
+
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache)
+          })
+
+          return response
+        })
+        .catch(() => {
+          // Return offline page for navigation requests
+          if (event.request.mode === "navigate") {
+            return (
+              caches.match(OFFLINE_URL) ||
+              caches.match(basePath + "/") ||
+              new Response("Offline - Please check your connection", {
+                status: 503,
+                statusText: "Service Unavailable",
+              })
+            )
+          }
+        })
+    }),
+  )
+})
+
+// Handle background sync (for offline story uploads)
+self.addEventListener("sync", (event) => {
+  console.log("Service Worker: Background sync triggered", event.tag)
+
+  if (event.tag === "sync-stories") {
+    event.waitUntil(
+      // This would sync offline stories when connection is restored
+      syncOfflineStories(),
+    )
+  }
+})
+
+// Function to sync offline stories (placeholder)
+async function syncOfflineStories() {
+  try {
+    console.log("Service Worker: Syncing offline stories...")
+    // Implementation would go here to sync offline data
+    return Promise.resolve()
+  } catch (error) {
+    console.error("Service Worker: Sync failed", error)
+    throw error
+  }
+}

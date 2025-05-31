@@ -3,25 +3,19 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fix icon path for GitHub Pages -->
     <link rel="icon" href="./book.png" />
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#3f51b5" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Distory" />
-    <link rel="apple-touch-icon" href="./book.png" />
+    <!-- Fix manifest path for GitHub Pages -->
+    <link rel="manifest" href="./manifest.json" />
     <title>Distory</title>
-    <!-- Google Maps API -->
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g"
       async
       defer
-      onload="if(window.initMap) window.initMap()"
-      onerror="console.error('Google Maps failed to load')"
-    ></script>
-    <script type="module" crossorigin src="/Distory-Dicoding/assets/index-DeKi56d1.js"></script>
-    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/index-Bk__b5F_.css">
-  <link rel="manifest" href="/Distory-Dicoding/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Distory-Dicoding/registerSW.js"></script></head>
+    ></script>
+    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-D85wzj6-.js"></script>
+    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-DiE8fJYc.css">
+  </head>
   <body>
     <!-- Skip to Content Button (Initially hidden) -->
     <button id="skip-to-content" class="skip-to-content sr-only">
@@ -31,28 +25,6 @@
     <!-- Loading Overlay (Initially hidden) -->
     <div id="loading-overlay">
       <div id="loading-spinner"></div>
-    </div>
-
-    <!-- PWA Install Banner -->
-    <div id="install-banner" class="install-banner" style="display: none;">
-      <div class="install-banner-content">
-        <span class="install-text">Install Distory app for better experience!</span>
-        <div class="install-actions">
-          <button id="install-btn" class="install-btn">Install</button>
-          <button id="dismiss-install" class="dismiss-btn">×</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PWA Update Banner -->
-    <div id="update-banner" class="update-banner" style="display: none;">
-      <div class="update-banner-content">
-        <span class="update-text">New version available!</span>
-        <div class="update-actions">
-          <button id="update-btn" class="update-btn">Update</button>
-          <button id="dismiss-update" class="dismiss-btn">×</button>
-        </div>
-      </div>
     </div>
 
     <header>
@@ -89,6 +61,26 @@
     <!-- Main Content Area -->
     <main id="main-content" class="main-content" tabindex="-1"></main>
 
-    <!-- Vite PWA plugin will automatically inject manifest and service worker registration here -->
+    <!-- Register Service Worker with correct path -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          // Use relative path for GitHub Pages
+          const swPath = import.meta.env.DEV ? "/sw.js" : "./sw.js";
+          
+          navigator.serviceWorker
+            .register(swPath)
+            .then((registration) => {
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
+            })
+            .catch((error) => {
+              console.error("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
