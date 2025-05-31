@@ -1,0 +1,414 @@
+/* View toggle buttons */
+.view-toggle {
+  display: flex;
+  margin: 1rem 0;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.view-btn {
+  background-color: var(--bg-tertiary, #1e1e1e);
+  border: 1px solid var(--input-border, #333);
+  color: var(--text-secondary, #b0b0b0);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius, 4px);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.view-btn.active {
+  background-color: var(--accent-primary, #3f51b5);
+  color: white;
+  border-color: var(--accent-primary, #3f51b5);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.3);
+}
+
+.view-btn:hover:not(.active) {
+  background-color: var(--bg-secondary, #252525);
+}
+
+.view-btn:focus {
+  outline: 2px solid var(--accent-primary, #3f51b5);
+  outline-offset: 2px;
+}
+
+/* Story cards styling */
+.story-card {
+  position: relative;
+  border: 1px solid var(--input-border, #333);
+  border-radius: var(--border-radius, 4px);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary, #252525);
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.story-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.story-content {
+  padding: 1rem;
+}
+
+.story-title {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.story-description {
+  color: var(--text-secondary, #b0b0b0);
+  margin-bottom: 0.5rem;
+}
+
+.story-location {
+  font-size: 0.9rem;
+  color: var(--text-tertiary, #888);
+}
+
+/* Improved bookmark toggle button styling */
+.bookmark-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #cccccc;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.bookmark-toggle:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* When bookmarked - make it gold with glow effect */
+.bookmark-toggle.bookmarked {
+  color: #FFD700;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Add animation for toggling bookmark */
+@keyframes bookmark-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.bookmark-toggle.toggling {
+  animation: bookmark-pulse 0.5s ease;
+}
+
+/* For better visibility, add a tooltip */
+.bookmark-toggle::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: -40px;
+  right: -20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.bookmark-toggle:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Modal bookmark button enhancement */
+.bookmark-btn {
+  background-color: var(--bg-tertiary, #1e1e1e);
+  color: var(--text-primary, #e0e0e0);
+  border: 1px solid var(--input-border, #333);
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--border-radius, 4px);
+  margin: 1rem 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.bookmark-btn:hover {
+  background-color: var(--accent-primary, #3f51b5);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bookmark-btn.bookmarked {
+  background-color: var(--accent-primary, #3f51b5);
+  color: white;
+}
+
+.bookmark-btn #bookmark-icon {
+  font-size: 1.2rem;
+}
+
+.bookmark-btn.bookmarked #bookmark-icon {
+  color: #FFD700;
+}
+
+.bookmark-btn.toggling {
+  animation: bookmark-pulse 0.5s ease;
+}
+
+/* Bookmark badge */
+.bookmark-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--accent-primary, #3f51b5);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius, 4px);
+  font-size: 0.8rem;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.bookmark-info {
+  font-size: 0.8rem;
+  color: var(--accent-primary, #3f51b5);
+  margin-top: 0.5rem;
+}
+
+/* Cached badge */
+.cached-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff9800;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius, 4px);
+  font-size: 0.8rem;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.cached-info {
+  font-size: 0.8rem;
+  color: #ff9800;
+  margin-top: 0.5rem;
+}
+
+/* Network status indicators */
+.network-status {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius, 4px);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.network-status.online {
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+}
+
+.network-status.offline {
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid #FF9800;
+  color: #FF9800;
+}
+
+.status-icon {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.85);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: var(--bg-primary, #121212);
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid var(--input-border, #333);
+  border-radius: var(--border-radius, 4px);
+  width: 80%;
+  max-width: 800px;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.close-button {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  color: var(--text-secondary, #b0b0b0);
+  font-size: 28px;
+  font-weight: bold;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: var(--accent-primary, #3f51b5);
+}
+
+#modal-image-container {
+  margin: 1rem 0;
+  text-align: center;
+  position: relative;
+}
+
+#modal-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: var(--border-radius, 4px);
+}
+
+.cached-indicator {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff9800;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius, 4px);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.modal-map-container {
+  height: 300px;
+  margin-top: 1rem;
+  border-radius: var(--border-radius, 4px);
+  overflow: hidden;
+}
+
+.map-unavailable,
+.map-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: var(--bg-tertiary, #1e1e1e);
+  color: var(--text-secondary, #b0b0b0);
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  z-index: 1001;
+  transition: transform 0.3s ease;
+}
+
+.toast.error {
+  background-color: rgba(244, 67, 54, 0.9);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* No stories placeholder */
+.no-stories {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: var(--bg-secondary, #252525);
+  border-radius: var(--border-radius, 4px);
+  border: 1px dashed var(--input-border, #333);
+  margin: 2rem 0;
+}
+
+.error-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid #F44336;
+  border-radius: var(--border-radius, 4px);
+  margin: 2rem 0;
+  color: #F44336;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .view-toggle {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .view-btn {
+    width: 100%;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 15px;
+  }
+  
+  #modal-image {
+    max-height: 250px;
+  }
+  
+  .modal-map-container {
+    height: 200px;
+  }
+  
+  /* Make tooltip work better on mobile */
+  .bookmark-toggle::after {
+    bottom: -30px;
+    right: -10px;
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+}

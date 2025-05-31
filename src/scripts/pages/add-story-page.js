@@ -455,7 +455,12 @@ export default class AddStoryPage {
       }
 
       // Submit to API
-      const result = await this.presenter.addStory(formData);
+      const result = await this.presenter.addStory({
+        description: story.description,
+        photo: imageFile,
+        lat: story.lat,
+        lon: story.lon
+      });
 
       if (result.success) {
         // Delete from IndexedDB
@@ -849,12 +854,15 @@ export default class AddStoryPage {
       return;
     }
 
+    // Initialize the image variables
     let imageFile = null;
     let imageBase64 = null;
 
-    // Handle file selection for image
+    // Handle image source appropriately based on the selected method
     if (this.imageSource === "upload") {
-      imageFile = document.getElementById("story-image").files[0];
+      const fileInput = document.getElementById("story-image");
+      imageFile = fileInput.files[0];
+      
       if (!imageFile) {
         Swal.fire({
           title: "Error!",
@@ -867,19 +875,35 @@ export default class AddStoryPage {
         });
         return;
       }
-
       // Convert the file to base64 for offline storage
       imageBase64 = await this.fileToBase64(imageFile);
+      
     } else if (this.imageSource === "camera" && this.capturedImage) {
+      // Convert base64 camera image to File object
       imageFile = await this.base64ToFile(
         this.capturedImage,
         "camera-photo.jpg"
       );
       imageBase64 = this.capturedImage;
+      
     } else {
       Swal.fire({
         title: "Error!",
         text: "Please select an image or take a photo.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#f04747",
+      });
+      return;
+    }
+
+    // Validate the image file
+    if (!imageFile) {
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to process the image. Please try again.",
         icon: "error",
         background: "#121212",
         color: "#e0e0e0",
@@ -903,14 +927,14 @@ export default class AddStoryPage {
     try {
       // Check if we're online or offline
       if (navigator.onLine) {
-        // We're online, submit to API
-        const formData = new FormData();
-        formData.append("description", description);
-        formData.append("photo", imageFile);
-        formData.append("lat", lat);
-        formData.append("lon", lon);
-
-        const result = await this.presenter.addStory(formData);
+        // We're online, submit to API through the presenter
+        // Send data as object, not FormData
+        const result = await this.presenter.addStory({
+          description: description,
+          photo: imageFile, // Pass the File object directly
+          lat: lat,
+          lon: lon
+        });
 
         if (result.success) {
           Swal.fire({
@@ -1030,20 +1054,33 @@ export default class AddStoryPage {
   }
 
   async base64ToFile(base64String, filename) {
-    const parts = base64String.split(";base64,");
-    const contentType = parts[0].split(":")[1] || "image/jpeg";
-    const raw = window.atob(parts[1] || parts[0]);
-    const rawLength = raw.length;
+    // Check if the string is already properly formatted with data URL
+    const parts = base64String.includes(";base64,") 
+      ? base64String.split(";base64,")
+      : [null, base64String];
+    
+    // Get content type or default to JPEG
+    const contentType = parts[0] ? parts[0].split(":")[1] : "image/jpeg";
+    
+    // Get the base64 data
+    const base64Data = parts[1] || parts[0];
+    
+    try {
+      const raw = window.atob(base64Data);
+      const rawLength = raw.length;
 
-    const uInt8Array = new Uint8Array(rawLength);
+      const uInt8Array = new Uint8Array(rawLength);
 
-    for (let i = 0; i < rawLength; ++i) {
-      uInt8Array[i] = raw.charCodeAt(i);
+      for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+      }
+
+      const blob = new Blob([uInt8Array], { type: contentType });
+      return new File([blob], filename, { type: contentType });
+    } catch (error) {
+      console.error("Failed to convert base64 to File:", error);
+      throw new Error("Failed to process the image");
     }
-
-    const blob = new Blob([uInt8Array], { type: contentType });
-
-    return new File([blob], filename, { type: contentType });
   }
 
   // Convert a file to base64 for storing in IndexedDB

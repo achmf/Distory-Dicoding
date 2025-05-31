@@ -24,7 +24,7 @@ const PushNotification = {
     return outputArray
   },
 
-  // Register the service worker
+  // Register the service worker - FIXED
   async registerServiceWorker() {
     if (!this.isSupported()) {
       console.error("Push notifications not supported")
@@ -32,10 +32,25 @@ const PushNotification = {
     }
 
     try {
-      // The path should be '/sw.js' - from the root of your site
-      const registration = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/",
+      // Determine if we're in development or production
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
+      
+      // Use the correct path based on environment
+      const swPath = isDevelopment 
+        ? './sw.js'  // Use relative path in development (looks in public folder)
+        : '/Distory-Dicoding/sw.js';  // Use absolute path with base in production
+      
+      const swScope = isDevelopment 
+        ? './'  // Use relative scope in development
+        : '/Distory-Dicoding/';  // Use absolute scope with base in production
+
+      console.log(`Registering service worker at: ${swPath} with scope: ${swScope}`);
+      
+      const registration = await navigator.serviceWorker.register(swPath, {
+        scope: swScope,
       })
+      
       console.log("Service Worker registered successfully:", registration)
       return registration
     } catch (error) {

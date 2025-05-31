@@ -1,194 +1,185 @@
-import CONFIG from "../config"
-import PushNotification from "../../utils/push-notification"
+import CONFIG from "../config";
+import {
+  cacheStories,
+  bookmarkStory,
+  removeBookmark,
+  isBookmarked
+} from "../../utils/indexedDB";
 
 class StoryModel {
   constructor() {
-    this.baseUrl = CONFIG.BASE_URL
-    this.token = localStorage.getItem("token")
+    this.baseUrl = CONFIG.BASE_URL;
   }
 
   async getAllStories(page = 1, size = 10, location = 0) {
     try {
-      const url = new URL(`${this.baseUrl}/stories`)
-      url.searchParams.append("page", page)
-      url.searchParams.append("size", size)
-      url.searchParams.append("location", location)
-
-      const token = localStorage.getItem("token")
+      const token = CONFIG.TOKEN;
+      
       if (!token) {
-        throw new Error("Authentication required. Please login first.")
+        throw new Error("No authentication token available");
       }
-
+      
+      const url = new URL(`${this.baseUrl}/stories`);
+      
+      // Add query parameters
+      if (page) url.searchParams.append("page", page);
+      if (size) url.searchParams.append("size", size);
+      if (location) url.searchParams.append("location", 1);
+      
       const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to fetch stories")
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      
+      const responseJson = await response.json();
+      
+      if (responseJson.error) {
+        throw new Error(responseJson.message);
       }
-
-      const data = await response.json()
-
-      if (data.error) {
-        throw new Error(data.message)
+      
+      // Cache stories for offline access
+      if (responseJson.listStory && responseJson.listStory.length > 0) {
+        try {
+          await cacheStories(responseJson.listStory);
+        } catch (cacheError) {
+          console.error("Failed to cache stories:", cacheError);
+        }
       }
-
-      return data.listStory
+      
+      return responseJson;
     } catch (error) {
-      console.error("Error fetching stories:", error)
-      throw error
+      console.error("Error fetching stories:", error);
+      throw error;
     }
   }
 
   async getStoryDetails(storyId) {
     try {
-      const token = localStorage.getItem("token")
+      const token = CONFIG.TOKEN;
+      
       if (!token) {
-        throw new Error("Authentication required. Please login first.")
+        throw new Error("No authentication token available");
       }
-
+      
       const response = await fetch(`${this.baseUrl}/stories/${storyId}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to fetch story details")
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      
+      const responseJson = await response.json();
+      
+      if (responseJson.error) {
+        throw new Error(responseJson.message);
       }
-
-      const data = await response.json()
-
-      if (data.error) {
-        throw new Error(data.message)
-      }
-
-      return data.story
+      
+      return responseJson;
     } catch (error) {
-      console.error("Error fetching story details:", error)
-      throw error
+      console.error("Error fetching story details:", error);
+      throw error;
     }
   }
 
   async addStory(storyData) {
     try {
-      const token = localStorage.getItem("token")
+      const token = CONFIG.TOKEN;
+      
       if (!token) {
-        throw new Error("Authentication required. Please login first.")
+        throw new Error("No authentication token available");
       }
-
+      
+      // Create FormData object
+      const formData = new FormData();
+      formData.append("description", storyData.description);
+      
+      // Check if photo exists and handle it safely
+      if (!storyData.photo) {
+        throw new Error("Photo is required for submitting a story");
+      }
+      
+      // Convert base64 to File if photo is base64
+      if (typeof storyData.photo === 'string' && storyData.photo.startsWith('data:')) {
+        const byteString = atob(storyData.photo.split(',')[1]);
+        const mimeString = storyData.photo.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        formData.append("photo", file);
+      } else if (storyData.photo instanceof File) {
+        formData.append("photo", storyData.photo);
+      } else {
+        throw new Error("Invalid photo format. Must be a File object or base64 string.");
+      }
+      
+      // Add location if available
+      if (storyData.lat && storyData.lon) {
+        formData.append("lat", storyData.lat);
+        formData.append("lon", storyData.lon);
+      }
+      
       const response = await fetch(`${this.baseUrl}/stories`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
-        body: storyData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to add story")
+        body: formData
+      });
+      
+      const responseJson = await response.json();
+      
+      if (responseJson.error) {
+        throw new Error(responseJson.message);
       }
-
-      const responseData = await response.json()
-
-      // If the story was added successfully, show a notification
-      if (!responseData.error) {
-        // Create a story object with the data we have
-        const storyObj = {
-          id: responseData.id || "new-story",
-          name: "Your Story", // Since it's the user's own story
-          description: storyData.get("description"),
-          photoUrl: null, // We don't have the URL yet
-        }
-
-        // Try to get the user's name from localStorage if available
-        const userData = localStorage.getItem("user_data")
-        if (userData) {
-          try {
-            const parsedUserData = JSON.parse(userData)
-            if (parsedUserData.name) {
-              storyObj.name = parsedUserData.name
-            }
-          } catch (e) {
-            console.error("Error parsing user data:", e)
-          }
-        }
-
-        // Show a notification for the new story
-        this.notifyStoryPublished(storyObj)
-      }
-
-      return responseData
+      
+      return responseJson;
     } catch (error) {
-      console.error("Error adding story:", error)
-      throw error
+      console.error("Error adding story:", error);
+      throw error;
     }
   }
 
-  // Method to notify that a story has been published
-  async notifyStoryPublished(storyData) {
+  // Bookmark related methods
+  async bookmarkStory(story) {
     try {
-      // First check if notifications are enabled
-      const isNotificationActive = await PushNotification.isNotificationActive()
-
-      if (isNotificationActive) {
-        // Show a local notification
-        await PushNotification.notifyNewStory(storyData)
-
-        // If we have a server endpoint for sending push notifications to subscribers
-        // we would call it here
-        // await this.sendPushNotificationToSubscribers(storyData);
-      }
+      return await bookmarkStory(story);
     } catch (error) {
-      console.error("Error sending story notification:", error)
-      // Don't throw the error - notifications are non-critical
+      console.error("Error bookmarking story:", error);
+      throw error;
     }
   }
-
-  // Method to send push notifications to subscribers (would be implemented on the server)
-  async sendPushNotificationToSubscribers(storyData) {
+  
+  async removeBookmark(storyId) {
     try {
-      const token = localStorage.getItem("token")
-      if (!token) {
-        return // Silently fail if not logged in
-      }
-
-      // This would call your server endpoint that handles sending push notifications
-      const response = await fetch(`${this.baseUrl}/notifications/send`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          storyId: storyData.id,
-          title: `New Story from ${storyData.name}`,
-          body: storyData.description,
-          imageUrl: storyData.photoUrl,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        console.error("Error sending push notifications:", errorData)
-      }
+      return await removeBookmark(storyId);
     } catch (error) {
-      console.error("Error sending push notifications:", error)
+      console.error("Error removing bookmark:", error);
+      throw error;
+    }
+  }
+  
+  async isBookmarked(storyId) {
+    try {
+      return await isBookmarked(storyId);
+    } catch (error) {
+      console.error("Error checking bookmark status:", error);
+      return false;
     }
   }
 
   isLoggedIn() {
-    return !!localStorage.getItem("token")
+    return !!CONFIG.TOKEN;
   }
 }
 
-export default StoryModel
+export default StoryModel;

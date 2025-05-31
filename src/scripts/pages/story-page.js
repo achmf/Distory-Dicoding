@@ -1,20 +1,31 @@
-import { getAllStoriesFromDB, saveStoryToDB } from "../../utils/indexedDB"
+import {
+  bookmarkStory,
+  removeBookmark,
+  isBookmarked,
+  getBookmarkedStories,
+  getCachedStories,
+  cacheStories,
+} from "../../utils/indexedDB";
 
 export default class StoryPage {
   constructor() {
-    this.presenter = null
-    this.handleModalKeydown = null
-    this.isOfflineMode = !navigator.onLine
+    this.presenter = null;
+    this.handleModalKeydown = null;
+    this.isOfflineMode = !navigator.onLine;
+    this.currentView = "all"; // 'all' or 'bookmarks'
+    this.needsRefresh = false;
   }
 
   setPresenter(presenter) {
-    this.presenter = presenter
+    this.presenter = presenter;
   }
 
   async render() {
     // Check if user is logged in through presenter
-    const isLoggedIn = this.presenter ? this.presenter.isLoggedIn() : false
-    const userName = isLoggedIn ? localStorage.getItem("userName") : null
+    const isLoggedIn = this.presenter ? this.presenter.isLoggedIn() : false;
+    const userName = isLoggedIn
+      ? localStorage.getItem("userName") || "User"
+      : "Guest";
 
     if (!isLoggedIn) {
       return `
@@ -23,26 +34,40 @@ export default class StoryPage {
           <p>You need to be logged in to view stories.</p>
           <a href="#/login" class="btn">Login</a>
         </main>
-      `
+      `;
     }
 
     // Check if we're online or offline
     const networkStatus = navigator.onLine
       ? `<div class="network-status online">
-          <span class="status-icon"><i class="fas fa-wifi"></i></span>
+          <span class="status-icon">📶</span>
           <span class="status-text">Online - Showing latest stories</span>
         </div>`
       : `<div class="network-status offline">
-          <span class="status-icon"><i class="fas fa-exclamation-triangle"></i></span>
+          <span class="status-icon">⚠️</span>
           <span class="status-text">Offline - Showing cached stories</span>
-        </div>`
+        </div>`;
 
     return `
       <main class="container" role="main">
-        <h1>All Stories</h1>
-        <p>Welcome, ${userName || "User"}!</p>
+        <h1>Stories</h1>
+        <p>Welcome, ${userName}!</p>
         
         ${networkStatus}
+        
+        <!-- View toggle buttons -->
+        <div class="view-toggle">
+          <button id="view-all-stories" class="view-btn ${
+            this.currentView === "all" ? "active" : ""
+          }">
+            All Stories
+          </button>
+          <button id="view-bookmarks" class="view-btn ${
+            this.currentView === "bookmarks" ? "active" : ""
+          }">
+            My Bookmarks
+          </button>
+        </div>
         
         <div id="loading-indicator" aria-live="polite">Loading stories...</div>
         <div id="stories-container" class="story-feed" role="feed" aria-busy="true" aria-label="Stories feed"></div>
@@ -58,522 +83,782 @@ export default class StoryPage {
             <p id="modal-description"></p>
             <p id="modal-createdAt"></p>
             <p id="modal-location"></p>
+            <!-- Bookmark button in modal -->
+            <button id="modal-bookmark-btn" class="bookmark-btn">
+              <span id="bookmark-icon">☆</span> <span id="bookmark-text">Bookmark</span>
+            </button>
             <div id="modal-map" class="modal-map-container" style="display: none;" role="application" aria-label="Story location map"></div>
           </div>
         </div>
       </main>
-    `
+    `;
   }
 
   async afterRender() {
-    if (!this.presenter || !this.presenter.isLoggedIn()) return
+    if (!this.presenter || !this.presenter.isLoggedIn()) return;
 
-    const storiesContainer = document.getElementById("stories-container")
-    const loadingIndicator = document.getElementById("loading-indicator")
+    const storiesContainer = document.getElementById("stories-container");
+    const loadingIndicator = document.getElementById("loading-indicator");
+    const viewAllBtn = document.getElementById("view-all-stories");
+    const viewBookmarksBtn = document.getElementById("view-bookmarks");
+
+    // Set up view toggle buttons
+    viewAllBtn?.addEventListener("click", () => {
+      this.currentView = "all";
+      this.loadStories();
+
+      // Update active button
+      viewAllBtn.classList.add("active");
+      viewBookmarksBtn.classList.remove("active");
+    });
+
+    viewBookmarksBtn?.addEventListener("click", () => {
+      this.currentView = "bookmarks";
+      this.loadBookmarkedStories();
+
+      // Update active button
+      viewBookmarksBtn.classList.add("active");
+      viewAllBtn.classList.remove("active");
+    });
 
     // Set up network status listeners
-    window.addEventListener("online", () => this.handleNetworkChange(true))
-    window.addEventListener("offline", () => this.handleNetworkChange(false))
+    window.addEventListener("online", () => this.handleNetworkChange(true));
+    window.addEventListener("offline", () => this.handleNetworkChange(false));
+
+    // Initial load based on current view
+    if (this.currentView === "bookmarks") {
+      this.loadBookmarkedStories();
+    } else {
+      this.loadStories();
+    }
+  }
+
+  async loadStories() {
+    const storiesContainer = document.getElementById("stories-container");
+    const loadingIndicator = document.getElementById("loading-indicator");
 
     try {
-      let stories = []
-      let source = "api"
+      let stories = [];
+      let source = "api";
 
       // Check if we're online or offline
       if (navigator.onLine) {
-        // We're online, fetch from API
-        const page = 1
-        const size = 10
-        const location = 0
+        // Online: Get stories from API
+        const result = await this.presenter.getAllStories();
+        if (result && result.listStory) {
+          stories = result.listStory;
 
-        const result = await this.presenter.getAllStories(page, size, location)
-
-        if (result.success && result.data && result.data.length > 0) {
-          stories = result.data
-
-          // Store stories in IndexedDB for offline use
+          // Cache stories for offline use
           try {
-            // Clear existing stories first to avoid duplicates
-            const existingStories = await getAllStoriesFromDB()
-            for (const story of existingStories) {
-              if (story.type === "api-story") {
-                await this.deleteStoryFromDB(story.id)
-              }
-            }
-
-            // Save new stories
-            for (const story of stories) {
-              await saveStoryToDB({
-                ...story,
-                type: "api-story", // Mark as coming from API
-                cachedAt: new Date().toISOString(),
-              })
-            }
-            console.log("Stories cached successfully")
-          } catch (dbError) {
-            console.error("Failed to cache stories:", dbError)
-          }
-        } else {
-          // API fetch failed, try to get from IndexedDB
-          try {
-            const dbStories = await getAllStoriesFromDB()
-            stories = dbStories.filter((story) => story.type === "api-story")
-            source = "cache"
-          } catch (dbError) {
-            console.error("Failed to fetch stories from IndexedDB:", dbError)
+            await cacheStories(stories);
+          } catch (cacheError) {
+            console.error("Failed to cache stories:", cacheError);
           }
         }
       } else {
-        // We're offline, fetch from IndexedDB
-        try {
-          const dbStories = await getAllStoriesFromDB()
-          stories = dbStories.filter((story) => story.type === "api-story")
-          source = "cache"
-        } catch (dbError) {
-          console.error("Failed to fetch stories from IndexedDB:", dbError)
-          stories = []
-        }
+        // Offline: Get cached stories from IndexedDB
+        stories = await getCachedStories();
+        source = "cache";
       }
 
       if (loadingIndicator) {
-        loadingIndicator.style.display = "none"
+        loadingIndicator.style.display = "none";
       }
 
       // Update ARIA attributes to indicate loading is complete
-      storiesContainer.setAttribute("aria-busy", "false")
+      storiesContainer.setAttribute("aria-busy", "false");
 
       if (stories.length === 0) {
         storiesContainer.innerHTML = `
           <div class="no-stories">
-            <p>No stories found.</p>
-            ${
-              source === "cache"
-                ? `<p>You are currently viewing cached data. Connect to the internet to see the latest stories.</p>`
-                : `<p>Try refreshing the page or check back later.</p>`
-            }
+            <p>No stories available. ${
+              navigator.onLine ? "" : "Please check your internet connection."
+            }</p>
           </div>
-        `
-        return
+        `;
+        return;
       }
 
       // Update the network status indicator
-      this.updateNetworkStatus(navigator.onLine, source)
+      this.updateNetworkStatus(navigator.onLine, source);
 
       // Render the stories
-      storiesContainer.innerHTML = stories
-        .map(
-          (story, index) => `
-            <article class="story-card ${source === "cache" ? "cached-story" : ""}" 
-                    data-story-id="${story.id}" 
-                    data-source="${source}"
-                    tabindex="0" 
-                    role="article" 
-                    aria-labelledby="story-title-${index}" 
-                    aria-describedby="story-desc-${index}">
-              ${source === "cache" ? '<div class="cached-badge">Cached</div>' : ""}
-              <img src="${story.photoUrl}" alt="Image for story: ${story.name}" class="story-image" />
-              <div class="story-content">
-                <h2 id="story-title-${index}" class="story-title">${story.name}</h2>
-                <p id="story-desc-${index}" class="story-description">${story.description}</p>
-                ${
-                  story.lat && story.lon
-                    ? `<p class="story-location">Location: ${story.lat.toFixed(6)}, ${story.lon.toFixed(6)}</p>`
-                    : ""
-                }
-                ${
-                  source === "cache"
-                    ? `<p class="cached-info">Cached on: ${new Date(story.cachedAt).toLocaleString()}</p>`
-                    : ""
-                }
-              </div>
-            </article>
-          `,
-        )
-        .join("")
-
-      // Add click event listener to all story cards
-      const storyCards = document.querySelectorAll(".story-card")
-      storyCards.forEach((card) => {
-        card.addEventListener("click", async (e) => {
-          const storyId = e.currentTarget.getAttribute("data-story-id")
-          const source = e.currentTarget.getAttribute("data-source")
-          await this.showStoryDetails(storyId, source)
-        })
-
-        // Add keyboard support
-        card.addEventListener("keydown", async (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            const storyId = e.currentTarget.getAttribute("data-story-id")
-            const source = e.currentTarget.getAttribute("data-source")
-            await this.showStoryDetails(storyId, source)
-          }
-        })
-      })
+      await this.renderStories(stories, source);
     } catch (error) {
-      console.error("Error loading stories:", error)
-
-      // Try to load from IndexedDB if API fetch fails
-      try {
-        if (loadingIndicator) {
-          loadingIndicator.textContent = "Trying to load cached stories..."
-        }
-
-        const dbStories = await getAllStoriesFromDB()
-        const stories = dbStories.filter((story) => story.type === "api-story")
-
-        if (stories.length > 0) {
-          this.renderCachedStories(stories)
-          return
-        }
-      } catch (dbError) {
-        console.error("Failed to fetch stories from IndexedDB:", dbError)
-      }
+      console.error("Error loading stories:", error);
 
       if (loadingIndicator) {
-        loadingIndicator.style.display = "none"
+        loadingIndicator.style.display = "none";
       }
 
       storiesContainer.innerHTML = `
-        <div class="error-message" role="alert">
-          <p>${error.message || "Failed to load stories"}</p>
-          <p>No cached stories available.</p>
-          <a href="#/login" class="btn">Login again</a>
+        <div class="error-message">
+          <p>Failed to load stories: ${error.message || "Unknown error"}</p>
+          <button class="btn" onclick="window.location.reload()">Try Again</button>
         </div>
-      `
+      `;
     }
   }
 
-  // Render stories from cache
-  renderCachedStories(stories) {
-    const storiesContainer = document.getElementById("stories-container")
-    const loadingIndicator = document.getElementById("loading-indicator")
+  async loadBookmarkedStories() {
+    const storiesContainer = document.getElementById("stories-container");
+    const loadingIndicator = document.getElementById("loading-indicator");
 
     if (loadingIndicator) {
-      loadingIndicator.style.display = "none"
+      loadingIndicator.style.display = "block";
     }
 
-    // Update ARIA attributes to indicate loading is complete
-    storiesContainer.setAttribute("aria-busy", "false")
+    try {
+      // Get bookmarked stories from IndexedDB
+      const bookmarks = await getBookmarkedStories();
 
-    // Update the network status indicator
-    this.updateNetworkStatus(false, "cache")
+      if (loadingIndicator) {
+        loadingIndicator.style.display = "none";
+      }
 
-    // Render the stories
-    storiesContainer.innerHTML = stories
+      // Update ARIA attributes
+      storiesContainer.setAttribute("aria-busy", "false");
+
+      if (bookmarks.length === 0) {
+        storiesContainer.innerHTML = `
+          <div class="no-stories">
+            <p>You haven't bookmarked any stories yet.</p>
+            <p>Click on a story and use the bookmark button to save it for later.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Render bookmarked stories
+      await this.renderStories(bookmarks, "bookmark");
+    } catch (error) {
+      console.error("Error loading bookmarked stories:", error);
+
+      if (loadingIndicator) {
+        loadingIndicator.style.display = "none";
+      }
+
+      storiesContainer.innerHTML = `
+        <div class="error-message">
+          <p>Failed to load bookmarks: ${error.message || "Unknown error"}</p>
+          <button class="btn" onclick="window.location.reload()">Try Again</button>
+        </div>
+      `;
+    }
+  }
+
+  async renderStories(stories, source) {
+    const storiesContainer = document.getElementById("stories-container");
+
+    // For each story, check if it's bookmarked to show the correct bookmark status
+    const storiesWithBookmarkStatus = await Promise.all(
+      stories.map(async (story) => {
+        const isStoryBookmarked = await isBookmarked(story.id);
+        return { ...story, isBookmarked: isStoryBookmarked };
+      })
+    );
+
+    storiesContainer.innerHTML = storiesWithBookmarkStatus
       .map(
         (story, index) => `
-          <article class="story-card cached-story" 
+          <article class="story-card ${
+            source === "cache" ? "cached-story" : ""
+          } ${source === "bookmark" ? "bookmarked-story" : ""}" 
                   data-story-id="${story.id}" 
-                  data-source="cache"
+                  data-source="${source}"
                   tabindex="0" 
                   role="article" 
                   aria-labelledby="story-title-${index}" 
                   aria-describedby="story-desc-${index}">
-            <div class="cached-badge">Cached</div>
-            <img src="${story.photoUrl}" alt="Image for story: ${story.name}" class="story-image" />
+            ${
+              source === "cache" ? '<div class="cached-badge">Cached</div>' : ""
+            }
+            ${
+              source === "bookmark"
+                ? '<div class="bookmark-badge">Bookmarked</div>'
+                : ""
+            }
+            <img src="${story.photoUrl}" alt="Image for story: ${
+          story.name
+        }" class="story-image" loading="lazy" />
             <div class="story-content">
-              <h2 id="story-title-${index}" class="story-title">${story.name}</h2>
-              <p id="story-desc-${index}" class="story-description">${story.description}</p>
+              <h2 id="story-title-${index}" class="story-title">${
+          story.name
+        }</h2>
+              <p id="story-desc-${index}" class="story-description">${
+          story.description
+        }</p>
               ${
                 story.lat && story.lon
-                  ? `<p class="story-location">Location: ${story.lat.toFixed(6)}, ${story.lon.toFixed(6)}</p>`
+                  ? `<p class="story-location">📍 Location: ${story.lat.toFixed(
+                      6
+                    )}, ${story.lon.toFixed(6)}</p>`
                   : ""
               }
-              <p class="cached-info">Cached on: ${new Date(story.cachedAt).toLocaleString()}</p>
+              ${
+                source === "cache"
+                  ? `<p class="cached-info">Cached on: ${new Date(
+                      story.cachedAt
+                    ).toLocaleString()}</p>`
+                  : ""
+              }
+              ${
+                source === "bookmark"
+                  ? `<p class="bookmark-info">Bookmarked on: ${new Date(
+                      story.bookmarkedAt
+                    ).toLocaleString()}</p>`
+                  : ""
+              }
             </div>
+            <button class="bookmark-toggle ${
+              story.isBookmarked ? "bookmarked" : ""
+            }" 
+                    data-story-id="${story.id}" 
+                    aria-label="${
+                      story.isBookmarked ? "Remove bookmark" : "Bookmark this story"
+                    }">
+              ${story.isBookmarked ? "★" : "☆"}
+            </button>
           </article>
-        `,
+        `
       )
-      .join("")
+      .join("");
 
     // Add click event listener to all story cards
-    const storyCards = document.querySelectorAll(".story-card")
+    const storyCards = document.querySelectorAll(".story-card");
     storyCards.forEach((card) => {
-      card.addEventListener("click", async (e) => {
-        const storyId = e.currentTarget.getAttribute("data-story-id")
-        await this.showStoryDetails(storyId, "cache")
-      })
-
-      // Add keyboard support
-      card.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault()
-          const storyId = e.currentTarget.getAttribute("data-story-id")
-          await this.showStoryDetails(storyId, "cache")
+      card.addEventListener("click", (event) => {
+        // Don't trigger if clicking the bookmark button
+        if (!event.target.closest(".bookmark-toggle")) {
+          const storyId = card.dataset.storyId;
+          const source = card.dataset.source;
+          this.showStoryDetails(storyId, source);
         }
-      })
-    })
+      });
+
+      // Add keyboard handling for accessibility
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          const storyId = card.dataset.storyId;
+          const source = card.dataset.source;
+          this.showStoryDetails(storyId, source);
+        }
+      });
+    });
+
+    // Add click event listener to bookmark toggle buttons
+    const bookmarkToggles = document.querySelectorAll(".bookmark-toggle");
+    bookmarkToggles.forEach((btn) => {
+      btn.addEventListener("click", async (event) => {
+        event.stopPropagation(); // Don't trigger card click
+        const storyId = btn.dataset.storyId;
+        await this.toggleBookmark(storyId, btn);
+      });
+    });
+  }
+
+  // New method to update card bookmark status when changed from modal
+  updateCardBookmarkStatus(storyId, isBookmarked) {
+    // Find the bookmark button for the story card with this ID
+    const cardButton = document.querySelector(
+      `.story-card[data-story-id="${storyId}"] .bookmark-toggle`
+    );
+
+    if (cardButton) {
+      // Update the button state
+      if (isBookmarked) {
+        cardButton.classList.add("bookmarked");
+        cardButton.innerHTML = "★";
+        cardButton.setAttribute("aria-label", "Remove bookmark");
+      } else {
+        cardButton.classList.remove("bookmarked");
+        cardButton.innerHTML = "☆";
+        cardButton.setAttribute("aria-label", "Bookmark this story");
+      }
+    }
+  }
+
+  // New method to update modal bookmark status when changed from card
+  updateModalBookmarkStatus(storyId, isBookmarked) {
+    const modal = document.getElementById("story-modal");
+
+    // Only update if the modal is visible
+    if (modal && modal.style.display === "block") {
+      const modalBookmarkBtn = document.getElementById("modal-bookmark-btn");
+      const bookmarkIcon = document.getElementById("bookmark-icon");
+      const bookmarkText = document.getElementById("bookmark-text");
+
+      // Check if this is the same story that's currently in the modal
+      const currentStoryIdInModal = modalBookmarkBtn?.dataset.storyId;
+
+      if (currentStoryIdInModal === storyId && modalBookmarkBtn) {
+        if (isBookmarked) {
+          modalBookmarkBtn.classList.add("bookmarked");
+          bookmarkIcon.textContent = "★";
+          bookmarkText.textContent = "Remove Bookmark";
+        } else {
+          modalBookmarkBtn.classList.remove("bookmarked");
+          bookmarkIcon.textContent = "☆";
+          bookmarkText.textContent = "Bookmark";
+        }
+      }
+    }
+  }
+
+  async toggleBookmark(storyId, buttonElement) {
+    try {
+      // Add animation class
+      buttonElement.classList.add("toggling");
+
+      // Remove the animation class after animation completes
+      setTimeout(() => buttonElement.classList.remove("toggling"), 500);
+
+      const isCurrentlyBookmarked =
+        buttonElement.classList.contains("bookmarked");
+
+      if (isCurrentlyBookmarked) {
+        // Remove bookmark
+        await removeBookmark(storyId);
+        buttonElement.classList.remove("bookmarked");
+        buttonElement.innerHTML = "☆"; // Empty star
+        buttonElement.setAttribute("aria-label", "Bookmark this story");
+
+        // Show a brief confirmation message
+        this.showToast("Bookmark removed");
+        
+        // Update modal if it's open for this story
+        this.updateModalBookmarkStatus(storyId, false);
+
+        // If we're in bookmarks view, refresh the view
+        if (this.currentView === "bookmarks") {
+          this.loadBookmarkedStories();
+        }
+      } else {
+        // Get the full story details to bookmark
+        let storyToBookmark;
+
+        if (navigator.onLine) {
+          const result = await this.presenter.getStoryDetails(storyId);
+          if (result && result.story) {
+            storyToBookmark = result.story;
+          } else {
+            throw new Error("Failed to get story details");
+          }
+        } else {
+          // Try to get from cached stories
+          const cachedStories = await getCachedStories();
+          storyToBookmark = cachedStories.find((story) => story.id === storyId);
+
+          if (!storyToBookmark) {
+            throw new Error("Story details not available offline");
+          }
+        }
+
+        // Add bookmark
+        await bookmarkStory(storyToBookmark);
+        buttonElement.classList.add("bookmarked");
+        buttonElement.innerHTML = "★"; // Filled star
+        buttonElement.setAttribute("aria-label", "Remove bookmark");
+
+        // Show a brief confirmation message
+        this.showToast("Story bookmarked");
+        
+        // Update modal if it's open for this story
+        this.updateModalBookmarkStatus(storyId, true);
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+
+      // Show error message
+      this.showToast(
+        isCurrentlyBookmarked
+          ? "Failed to remove bookmark"
+          : "Failed to bookmark story",
+        "error"
+      );
+    }
+  }
+
+  showToast(message, type = "success") {
+    // Create toast element if it doesn't exist
+    let toast = document.getElementById("toast");
+
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast";
+      document.body.appendChild(toast);
+    }
+
+    // Set toast content and class
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+
+    // Show toast
+    toast.classList.add("show");
+
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
   }
 
   // Handle network status change
   handleNetworkChange(isOnline) {
-    const networkStatus = document.querySelector(".network-status")
-    if (networkStatus) {
-      if (isOnline) {
-        networkStatus.className = "network-status online"
-        networkStatus.innerHTML = `
-          <span class="status-icon"><i class="fas fa-wifi"></i></span>
-          <span class="status-text">Online - Refreshing stories...</span>
-        `
-        // Refresh the page to get the latest stories
-        window.location.reload()
-      } else {
-        networkStatus.className = "network-status offline"
-        networkStatus.innerHTML = `
-          <span class="status-icon"><i class="fas fa-exclamation-triangle"></i></span>
-          <span class="status-text">Offline - Showing cached stories</span>
-        `
-      }
+    this.updateNetworkStatus(isOnline);
+
+    // Reload stories if going back online and viewing all stories
+    if (isOnline && this.currentView === "all") {
+      this.loadStories();
     }
   }
 
   // Update network status indicator
-  updateNetworkStatus(isOnline, source) {
-    const networkStatus = document.querySelector(".network-status")
-    if (networkStatus) {
-      if (isOnline && source === "api") {
-        networkStatus.className = "network-status online"
-        networkStatus.innerHTML = `
-          <span class="status-icon"><i class="fas fa-wifi"></i></span>
-          <span class="status-text">Online - Showing latest stories</span>
-        `
-      } else if (isOnline && source === "cache") {
-        networkStatus.className = "network-status online warning"
-        networkStatus.innerHTML = `
-          <span class="status-icon"><i class="fas fa-exclamation-circle"></i></span>
-          <span class="status-text">Online - Showing cached stories (API unavailable)</span>
-        `
+  updateNetworkStatus(isOnline, source = "") {
+    const statusElement = document.querySelector(".network-status");
+
+    if (statusElement) {
+      if (isOnline) {
+        statusElement.className = "network-status online";
+        statusElement.innerHTML = `
+          <span class="status-icon">📶</span>
+          <span class="status-text">${
+            source === "cache"
+              ? "Online - Showing cached stories"
+              : "Online - Showing latest stories"
+          }</span>
+        `;
       } else {
-        networkStatus.className = "network-status offline"
-        networkStatus.innerHTML = `
-          <span class="status-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        statusElement.className = "network-status offline";
+        statusElement.innerHTML = `
+          <span class="status-icon">⚠️</span>
           <span class="status-text">Offline - Showing cached stories</span>
-        `
+        `;
       }
     }
   }
 
-  // Show Story Details in the Modal
   async showStoryDetails(storyId, source = "api") {
-    const modal = document.getElementById("story-modal")
+    const modal = document.getElementById("story-modal");
+    const modalBookmarkBtn = document.getElementById("modal-bookmark-btn");
+    const bookmarkIcon = document.getElementById("bookmark-icon");
+    const bookmarkText = document.getElementById("bookmark-text");
 
     // Show loading state in modal
-    modal.style.display = "block"
-    document.getElementById("modal-title").textContent = "Loading story details..."
-    document.getElementById("modal-description").textContent = ""
-    document.getElementById("modal-createdAt").textContent = ""
-    document.getElementById("modal-location").textContent = ""
-    document.getElementById("modal-image-container").innerHTML = ""
-    document.getElementById("modal-map").style.display = "none"
+    modal.style.display = "block";
+    document.getElementById("modal-title").textContent =
+      "Loading story details...";
+    document.getElementById("modal-description").textContent = "";
+    document.getElementById("modal-createdAt").textContent = "";
+    document.getElementById("modal-location").textContent = "";
+    document.getElementById("modal-image-container").innerHTML = "";
+    document.getElementById("modal-map").style.display = "none";
 
     // Set ARIA attributes for the modal
-    modal.setAttribute("aria-hidden", "false")
+    modal.setAttribute("aria-hidden", "false");
 
     try {
-      let storyDetails = null
+      let story;
 
       if (source === "api" && navigator.onLine) {
-        // Fetch from API if online and source is API
-        const result = await this.presenter.getStoryDetails(storyId)
-
-        if (result.success) {
-          storyDetails = result.data
+        // Online: Get from API
+        const result = await this.presenter.getStoryDetails(storyId);
+        if (result && result.story) {
+          story = result.story;
         } else {
-          throw new Error(result.message || "Failed to load story details")
+          throw new Error(
+            result?.message || "Failed to retrieve story details"
+          );
         }
+      } else if (source === "bookmark") {
+        // Get from bookmarks
+        const bookmarks = await getBookmarkedStories();
+        story = bookmarks.find((s) => s.id === storyId);
+        if (!story) throw new Error("Bookmarked story not found");
       } else {
-        // Fetch from IndexedDB
-        try {
-          const dbStories = await getAllStoriesFromDB()
-          storyDetails = dbStories.find((story) => story.id === storyId)
+        // Get from cache
+        const cachedStories = await getCachedStories();
+        story = cachedStories.find((s) => s.id === storyId);
+        if (!story) throw new Error("Story not found in cache");
+      }
 
-          if (!storyDetails) {
-            throw new Error("Story not found in cache")
-          }
-        } catch (dbError) {
-          console.error("Failed to fetch story from IndexedDB:", dbError)
-          throw new Error("Failed to load story details from cache")
+      document.getElementById("modal-title").textContent = story.name;
+      document.getElementById("modal-description").textContent =
+        story.description;
+
+      // Format the date
+      const date = new Date(story.createdAt);
+      const formattedDate = date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      document.getElementById(
+        "modal-createdAt"
+      ).textContent = `Posted on: ${formattedDate}`;
+
+      // Add image with lazy loading
+      const modalImageContainer = document.getElementById(
+        "modal-image-container"
+      );
+      modalImageContainer.innerHTML = `
+        <img id="modal-image" src="${story.photoUrl}" alt="Story image by ${
+        story.name
+      }" loading="lazy" />
+        ${
+          source === "cache"
+            ? '<div class="cached-indicator">Cached Image</div>'
+            : ""
         }
-      }
+      `;
 
-      // Update modal content with the fetched details
-      document.getElementById("modal-title").textContent = storyDetails.name
+      // Show location if available
+      const modalLocation = document.getElementById("modal-location");
+      const modalMap = document.getElementById("modal-map");
 
-      // Create image with proper alt text
-      const imageContainer = document.getElementById("modal-image-container")
-      imageContainer.innerHTML = ""
-      const img = document.createElement("img")
-      img.src = storyDetails.photoUrl
-      img.alt = `Image for story: ${storyDetails.name}`
-      img.id = "modal-image"
-      imageContainer.appendChild(img)
+      if (story.lat && story.lon) {
+        modalLocation.textContent = `Location: ${story.lat.toFixed(
+          6
+        )}, ${story.lon.toFixed(6)}`;
 
-      // Add cached indicator if from cache
-      if (source === "cache") {
-        const cachedIndicator = document.createElement("div")
-        cachedIndicator.className = "cached-indicator"
-        cachedIndicator.textContent = "Cached Content"
-        imageContainer.appendChild(cachedIndicator)
-      }
-
-      document.getElementById("modal-description").textContent = storyDetails.description
-      document.getElementById("modal-createdAt").textContent = `Created At: ${new Date(
-        storyDetails.createdAt,
-      ).toLocaleString()}`
-
-      // Handle location data
-      if (storyDetails.lat && storyDetails.lon) {
-        // If location exists, show location and Google Map
-        document.getElementById("modal-location").textContent = `Location: ${storyDetails.lat.toFixed(
-          6,
-        )}, ${storyDetails.lon.toFixed(6)}`
-
-        // Only show map if online
-        if (navigator.onLine) {
-          document.getElementById("modal-map").style.display = "block"
-
-          // Check if google maps is loaded
-          if (typeof google !== "undefined") {
-            this.initMap(storyDetails.lat, storyDetails.lon)
-          } else {
-            document.getElementById("modal-map").innerHTML = `
-              <div class="map-unavailable">
-                <p>Map is unavailable offline</p>
-              </div>
-            `
-          }
+        // Show map if online, otherwise show unavailable message
+        if (navigator.onLine && typeof google !== "undefined" && google.maps) {
+          modalMap.style.display = "block";
+          this.initMap(story.lat, story.lon);
         } else {
-          document.getElementById("modal-map").style.display = "block"
-          document.getElementById("modal-map").innerHTML = `
+          modalMap.style.display = "block";
+          modalMap.innerHTML = `
             <div class="map-unavailable">
-              <p>Map is unavailable offline</p>
+              <p>${
+                source === "cache"
+                  ? "Map not available in cached mode."
+                  : "You are offline. Map cannot be displayed."
+              }</p>
             </div>
-          `
+          `;
         }
       } else {
-        // If no location, show the "Location not available" message
-        document.getElementById("modal-location").textContent = "Location not available"
-        document.getElementById("modal-map").style.display = "none" // Hide map
+        modalLocation.textContent = "No location information available";
+        modalMap.style.display = "none";
       }
 
-      // Close modal when the user clicks on the close button
-      document.getElementById("close-modal").addEventListener("click", () => {
-        this.closeModal()
-      })
+      // Update bookmark button
+      const isStoryBookmarked = await isBookmarked(storyId);
+      if (modalBookmarkBtn) {
+        modalBookmarkBtn.dataset.storyId = storyId; // Store story ID on the button
+        modalBookmarkBtn.classList.toggle("bookmarked", isStoryBookmarked);
+        bookmarkIcon.textContent = isStoryBookmarked ? "★" : "☆";
+        bookmarkText.textContent = isStoryBookmarked
+          ? "Remove Bookmark"
+          : "Bookmark";
 
-      // Add keyboard support for closing the modal with Escape key
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.style.display === "block") {
-          this.closeModal()
+        // Set up bookmark button click handler
+        modalBookmarkBtn.onclick = async () => {
+          modalBookmarkBtn.classList.add("toggling"); // Add animation
+          setTimeout(() => modalBookmarkBtn.classList.remove("toggling"), 500);
+
+          const isBookmarked =
+            modalBookmarkBtn.classList.contains("bookmarked");
+
+          try {
+            if (isBookmarked) {
+              await removeBookmark(storyId);
+              modalBookmarkBtn.classList.remove("bookmarked");
+              bookmarkIcon.textContent = "☆";
+              bookmarkText.textContent = "Bookmark";
+              this.showToast("Bookmark removed");
+              
+              // Update the corresponding card's bookmark button
+              this.updateCardBookmarkStatus(storyId, false);
+
+              // If we're in bookmarks view, refresh the view when modal is closed
+              if (this.currentView === "bookmarks") {
+                this.needsRefresh = true;
+              }
+            } else {
+              await bookmarkStory(story);
+              modalBookmarkBtn.classList.add("bookmarked");
+              bookmarkIcon.textContent = "★";
+              bookmarkText.textContent = "Remove Bookmark";
+              this.showToast("Story bookmarked");
+              
+              // Update the corresponding card's bookmark button
+              this.updateCardBookmarkStatus(storyId, true);
+            }
+          } catch (error) {
+            console.error("Error toggling bookmark in modal:", error);
+            this.showToast(
+              isBookmarked
+                ? "Failed to remove bookmark"
+                : "Failed to bookmark story",
+              "error"
+            );
+          }
+        };
+      }
+
+      // Setup modal close button
+      const closeButton = document.getElementById("close-modal");
+      closeButton.onclick = () => {
+        this.closeModal();
+
+        // If a refresh is needed (bookmarks were modified in bookmark view)
+        if (this.needsRefresh && this.currentView === "bookmarks") {
+          this.loadBookmarkedStories();
+          this.needsRefresh = false;
         }
-      })
+      };
 
-      // Trap focus within the modal
-      this.trapFocusInModal()
+      // Add keyboard support for Escape key
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.style.display === "block") {
+          this.closeModal();
+
+          if (this.needsRefresh && this.currentView === "bookmarks") {
+            this.loadBookmarkedStories();
+            this.needsRefresh = false;
+          }
+        }
+      });
     } catch (error) {
-      console.error("Error fetching story details:", error)
-      document.getElementById("modal-title").textContent = "Error"
-      document.getElementById("modal-description").textContent = error.message || "Failed to load story details"
-      document.getElementById("modal-image-container").innerHTML = ""
+      console.error("Error showing story details:", error);
+
+      document.getElementById("modal-title").textContent = "Error";
+      document.getElementById(
+        "modal-description"
+      ).textContent = `Failed to load story details: ${
+        error.message || "Unknown error"
+      }`;
     }
   }
 
-  // Close the modal and reset ARIA attributes
   closeModal() {
-    const modal = document.getElementById("story-modal")
-    modal.style.display = "none"
-    modal.setAttribute("aria-hidden", "true")
+    const modal = document.getElementById("story-modal");
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
 
-    // Remove event listeners
-    document.removeEventListener("keydown", this.handleModalKeydown)
+    // Clean up any event listeners
+    document.removeEventListener("keydown", this.handleModalKeydown);
   }
 
-  // Trap focus within the modal for keyboard users
-  trapFocusInModal() {
-    const modal = document.getElementById("story-modal")
-    const focusableElements = modal.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    )
-    const firstElement = focusableElements[0]
-    const lastElement = focusableElements[focusableElements.length - 1]
-
-    // Focus the first element
-    firstElement.focus()
-
-    // Handle tab key to trap focus
-    this.handleModalKeydown = (e) => {
-      if (e.key === "Tab") {
-        if (e.shiftKey && document.activeElement === firstElement) {
-          e.preventDefault()
-          lastElement.focus()
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-          e.preventDefault()
-          firstElement.focus()
-        }
+  initMap(lat, lng) {
+    try {
+      // Check if Google Maps API is available
+      if (typeof google === "undefined" || !google.maps) {
+        console.error("Google Maps API not loaded");
+        return;
       }
+
+      const mapDiv = document.getElementById("modal-map");
+
+      // Create a new map instance
+      const map = new google.maps.Map(mapDiv, {
+        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+          {
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#242f3e" }],
+          },
+          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+          {
+            featureType: "administrative.locality",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "poi",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "poi.park",
+            elementType: "geometry",
+            stylers: [{ color: "#263c3f" }],
+          },
+          {
+            featureType: "poi.park",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#6b9a76" }],
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#38414e" }],
+          },
+          {
+            featureType: "road",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#212a37" }],
+          },
+          {
+            featureType: "road",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#9ca5b3" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "geometry",
+            stylers: [{ color: "#746855" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#1f2835" }],
+          },
+          {
+            featureType: "road.highway",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#f3d19c" }],
+          },
+          {
+            featureType: "transit",
+            elementType: "geometry",
+            stylers: [{ color: "#2f3948" }],
+          },
+          {
+            featureType: "transit.station",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+          },
+          {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: "#17263c" }],
+          },
+          {
+            featureType: "water",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#515c6d" }],
+          },
+          {
+            featureType: "water",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#17263c" }],
+          },
+        ],
+      });
+
+      // Add a marker to the map
+      new google.maps.Marker({
+        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        map: map,
+        animation: google.maps.Animation.DROP,
+        title: "Story location",
+      });
+    } catch (error) {
+      console.error("Error initializing map:", error);
+
+      const mapDiv = document.getElementById("modal-map");
+      mapDiv.innerHTML = `
+        <div class="map-error">
+          <p>Failed to load map: ${error.message || "Unknown error"}</p>
+        </div>
+      `;
     }
-
-    document.addEventListener("keydown", this.handleModalKeydown)
-  }
-
-  // Initialize Google Map inside the modal
-  initMap(lat, lon) {
-    const mapContainer = document.getElementById("modal-map")
-
-    // Check if google maps is loaded
-    if (typeof google === "undefined") {
-      console.error("Google Maps API not loaded. Ensure it is included in your HTML.")
-      return
-    }
-
-    const map = new google.maps.Map(mapContainer, {
-      center: { lat: lat, lng: lon },
-      zoom: 14,
-    })
-
-    const marker = new google.maps.Marker({
-      position: { lat: lat, lng: lon },
-      map: map,
-      title: "Story Location",
-    })
-
-    // Add a descriptive label for screen readers
-    const mapLabel = document.createElement("p")
-    mapLabel.classList.add("sr-only")
-    mapLabel.textContent = `Map showing location at latitude ${lat.toFixed(6)} and longitude ${lon.toFixed(6)}`
-    mapContainer.appendChild(mapLabel)
-  }
-
-  // Helper method to delete a story from IndexedDB
-  async deleteStoryFromDB(id) {
-    const db = await openDB()
-    const transaction = db.transaction(STORE_NAME, "readwrite")
-    const store = transaction.objectStore(STORE_NAME)
-    store.delete(id)
-
-    return new Promise((resolve, reject) => {
-      transaction.oncomplete = () => resolve(id)
-      transaction.onerror = () => reject("Failed to delete story")
-    })
   }
 }
-
-// Helper function to open the IndexedDB database
-const openDB = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("distoryDB", 1)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains("stories")) {
-        db.createObjectStore("stories", { keyPath: "id", autoIncrement: true })
-      }
-    }
-
-    request.onerror = (event) => reject(event.target.error)
-    request.onsuccess = (event) => resolve(event.target.result)
-  })
-}
-
-const STORE_NAME = "stories"

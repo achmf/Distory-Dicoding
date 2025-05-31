@@ -6,20 +6,20 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#ffffff",
+  "background_color": "#121212",
   "theme_color": "#3f51b5",
   "categories": ["social", "lifestyle", "entertainment"],
   "lang": "en",
   "dir": "ltr",
   "icons": [
     {
-      "src": "./book.png",
+      "src": "./book-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./book.png",
+      "src": "./book-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -27,13 +27,13 @@
   ],
   "screenshots": [
     {
-      "src": "./book.png",
+      "src": "./screenshot-wide.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "./book.png",
+      "src": "./screenshot-narrow.png",
       "sizes": "750x1334",
       "type": "image/png",
       "form_factor": "narrow"
@@ -47,7 +47,7 @@
       "url": "./#/add-story",
       "icons": [
         {
-          "src": "./book.png",
+          "src": "./book-192.png",
           "sizes": "192x192"
         }
       ]
@@ -59,7 +59,7 @@
       "url": "./#/story",
       "icons": [
         {
-          "src": "./book.png",
+          "src": "./book-192.png",
           "sizes": "192x192"
         }
       ]
