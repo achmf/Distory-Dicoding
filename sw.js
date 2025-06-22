@@ -10,12 +10,6 @@ const staticAssets = [
   basePath + "/",
   basePath + "/index.html",
   basePath + "/manifest.json",
-  basePath + "/book-48.png",
-  basePath + "/book-144.png",
-  basePath + "/book-192.png",
-  basePath + "/book-512.png",
-  basePath + "/book.png",
-  basePath + "/favicon.png",
   basePath + "/offline.html"
 ]
 
@@ -157,27 +151,23 @@ self.addEventListener("fetch", (event) => {
 // Handle push events (notifications)
 self.addEventListener("push", (event) => {
   console.log("Service Worker: Push received")
-
   let notificationData = {
     title: "Distory Notification",
     options: {
       body: "You have a new notification",
-      icon: basePath + "/book-192.png",
-      badge: basePath + "/book-192.png",
       tag: "distory-notification",
       requireInteraction: false,
       actions: [
         {
           action: "view",
-          title: "View Stories",
-          icon: basePath + "/book-192.png",
+          title: "View Stories"
         },
         {
           action: "dismiss",
-          title: "Dismiss",
-        },
-      ],
-    },
+          title: "Dismiss"
+        }
+      ]
+    }
   }
 
   try {
