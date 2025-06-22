@@ -1,20 +1,25 @@
-// Service Worker for PWA functionality
+// Main Service Worker for Distory PWA
 const CACHE_NAME = "distory-pwa-v1"
 const OFFLINE_URL = "./offline.html"
 
 // Get the base path for GitHub Pages
-const basePath = self.location.pathname.replace("/sw.js", "")
+const basePath = "/Distory-Dicoding"
 
 // Assets to cache for offline functionality
 const staticAssets = [
   basePath + "/",
   basePath + "/index.html",
   basePath + "/manifest.json",
+  basePath + "/book-48.png",
+  basePath + "/book-144.png",
+  basePath + "/book-192.png",
+  basePath + "/book-512.png",
   basePath + "/book.png",
-  // Add other critical assets
+  basePath + "/favicon.png",
+  basePath + "/offline.html"
 ]
 
-// This ensures the service worker activates immediately
+// Install event - cache essential resources
 self.addEventListener("install", (event) => {
   console.log("Service Worker: Installing...")
 
@@ -31,11 +36,11 @@ self.addEventListener("install", (event) => {
       })
       .catch((error) => {
         console.error("Service Worker: Cache failed", error)
-      }),
+      })
   )
 })
 
-// This ensures the service worker takes control immediately
+// Activate event - clean up old caches
 self.addEventListener("activate", (event) => {
   console.log("Service Worker: Activating...")
 
@@ -51,12 +56,101 @@ self.addEventListener("activate", (event) => {
                 console.log("Service Worker: Deleting old cache", cacheName)
                 return caches.delete(cacheName)
               }
-            }),
+            })
           )
         }),
-      // Take control of all clients
-      clients.claim(),
-    ]),
+      // Take control of all pages
+      self.clients.claim()
+    ])
+  )
+})
+
+// Fetch event - serve cached content when offline with proper filtering
+self.addEventListener("fetch", (event) => {
+  const { request } = event
+  const url = new URL(request.url)
+
+  // Skip extension URLs and problematic requests - DO NOT CACHE OR INTERCEPT
+  if (
+    url.protocol === "chrome-extension:" ||
+    url.protocol === "moz-extension:" ||
+    url.protocol === "safari-extension:" ||
+    url.protocol === "ms-browser-extension:" ||
+    url.protocol === "chrome-search:" ||
+    url.protocol === "chrome:" ||
+    url.protocol === "moz:" ||
+    url.protocol === "about:" ||
+    url.href.includes("chrome-extension") ||
+    url.href.includes("moz-extension") ||
+    url.href.includes("safari-extension") ||
+    url.href.includes("ms-browser-extension") ||
+    url.href.includes("chrome-search://") ||
+    url.href.includes("chrome://") ||
+    url.href.includes("moz://") ||
+    url.href.includes("about:") ||
+    url.href.includes("gen_204") ||
+    url.href.includes("maps.googleapis.com/maps/api/mapsjs/gen_204") ||
+    url.href.includes("maps.gstatic.com")
+  ) {
+    // Let browser handle these requests normally - DO NOT INTERCEPT
+    return
+  }
+
+  // Skip non-GET requests
+  if (request.method !== "GET") {
+    return
+  }
+
+  // Only handle requests for our domain or relative URLs
+  if (url.origin !== location.origin && !url.href.startsWith(location.origin)) {
+    return
+  }
+
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      // Return cached version if available
+      if (cachedResponse) {
+        return cachedResponse
+      }
+
+      // Try to fetch from network
+      return fetch(request)
+        .then((response) => {
+          // Don't cache non-successful responses or non-basic responses
+          if (!response || response.status !== 200 || response.type !== "basic") {
+            return response
+          }
+
+          // Clone the response for caching
+          const responseToCache = response.clone()
+
+          // Cache the response
+          caches.open(CACHE_NAME).then((cache) => {
+            try {
+              cache.put(request, responseToCache)
+            } catch (error) {
+              console.warn("Failed to cache request:", request.url, error)
+            }
+          })
+
+          return response
+        })
+        .catch(() => {
+          // Return offline page for navigation requests
+          if (request.mode === "navigate") {
+            return caches.match(OFFLINE_URL) ||
+                   caches.match(basePath + "/") ||
+                   new Response("Offline - Please check your connection", {
+                     status: 503,
+                     statusText: "Service Unavailable",
+                     headers: { "Content-Type": "text/html" }
+                   })
+          }
+          
+          // For other requests, return a generic offline response
+          return new Response("Offline", { status: 503 })
+        })
+    })
   )
 })
 
@@ -68,15 +162,15 @@ self.addEventListener("push", (event) => {
     title: "Distory Notification",
     options: {
       body: "You have a new notification",
-      icon: "./book.png",
-      badge: "./book.png",
+      icon: basePath + "/book-192.png",
+      badge: basePath + "/book-192.png",
       tag: "distory-notification",
       requireInteraction: false,
       actions: [
         {
           action: "view",
           title: "View Stories",
-          icon: "./book.png",
+          icon: basePath + "/book-192.png",
         },
         {
           action: "dismiss",
@@ -130,72 +224,16 @@ self.addEventListener("notificationclick", (event) => {
       if (clients.openWindow) {
         return clients.openWindow(url)
       }
-    }),
+    })
   )
 })
 
-// Fetch event - serve cached content when offline
-self.addEventListener("fetch", (event) => {
-  // Skip Google Maps API requests from being cached
-  if (event.request.url.includes("maps.googleapis.com") || event.request.url.includes("maps.gstatic.com")) {
-    return
-  }
-
-  // Skip non-GET requests
-  if (event.request.method !== "GET") {
-    return
-  }
-
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // Return cached version if available
-      if (cachedResponse) {
-        return cachedResponse
-      }
-
-      // Try to fetch from network
-      return fetch(event.request)
-        .then((response) => {
-          // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type !== "basic") {
-            return response
-          }
-
-          // Clone the response for caching
-          const responseToCache = response.clone()
-
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache)
-          })
-
-          return response
-        })
-        .catch(() => {
-          // Return offline page for navigation requests
-          if (event.request.mode === "navigate") {
-            return (
-              caches.match(OFFLINE_URL) ||
-              caches.match(basePath + "/") ||
-              new Response("Offline - Please check your connection", {
-                status: 503,
-                statusText: "Service Unavailable",
-              })
-            )
-          }
-        })
-    }),
-  )
-})
-
-// Handle background sync (for offline story uploads)
+// Handle background sync
 self.addEventListener("sync", (event) => {
   console.log("Service Worker: Background sync triggered", event.tag)
 
   if (event.tag === "sync-stories") {
-    event.waitUntil(
-      // This would sync offline stories when connection is restored
-      syncOfflineStories(),
-    )
+    event.waitUntil(syncOfflineStories())
   }
 })
 
@@ -203,10 +241,8 @@ self.addEventListener("sync", (event) => {
 async function syncOfflineStories() {
   try {
     console.log("Service Worker: Syncing offline stories...")
-    // Implementation would go here to sync offline data
-    return Promise.resolve()
+    // Implementation would go here
   } catch (error) {
     console.error("Service Worker: Sync failed", error)
-    throw error
   }
 }
