@@ -12,13 +12,20 @@
     <link rel="manifest" href="./manifest.json" />
     
     <title>Distory</title>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g"
-      async
-      defer
-    ></script>
-    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-RcMy3ECi.js"></script>
-    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-DiE8fJYc.css">
+    <!-- Leaflet CSS -->
+    <link 
+      rel="stylesheet" 
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+    <!-- Leaflet JavaScript -->
+    <script 
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin="">
+    </script>
+    <script type="module" crossorigin src="/Distory-Dicoding/assets/main-CzLn9D5N.js"></script>
+    <link rel="stylesheet" crossorigin href="/Distory-Dicoding/assets/main-nhZmKtz8.css">
   </head>
   <body>
     <!-- Skip to Content Button (Initially hidden) -->
@@ -36,6 +43,13 @@
       <button id="dismiss-install" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Not now</button>
     </div>
 
+    <!-- PWA Update Banner -->
+    <div id="update-banner" style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #ff9800; color: white; padding: 16px; text-align: center; z-index: 1000;">
+      <p style="margin: 0 0 10px 0;">A new version is available!</p>
+      <button id="update-btn" style="background: white; color: #ff9800; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 8px; cursor: pointer;">Update Now</button>
+      <button id="dismiss-update" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Later</button>
+    </div>
+
     <header>
       <div class="main-header container">
         <a class="brand-name" href="#/">Distory</a>
@@ -48,7 +62,16 @@
             <li><a href="#/add-story">Add Story</a></li>
             <li><a href="#/register" id="register-link">Register</a></li>
             <li><a href="#/login" id="login-link">Login</a></li>
+            <li><a href="#" id="logout-link" style="display: none;">Logout</a></li>
           </ul>
+          
+          <!-- Notification Toggle Button for Desktop -->
+          <div id="desktop-notification-toggle" class="desktop-notification-toggle" style="display: none;">
+            <button id="desktop-toggle-notifications" class="notification-toggle-btn" title="Toggle notifications">
+              <span class="notification-icon">🔔</span>
+              <span id="desktop-notification-status" class="notification-text">Enable</span>
+            </button>
+          </div>
         </nav>
 
         <!-- Navigation Drawer for Mobile -->
@@ -59,6 +82,16 @@
             <li><a href="#/add-story">Add Story</a></li>
             <li><a href="#/register" id="register-drawer-link">Register</a></li>
             <li><a href="#/login" id="login-drawer-link">Login</a></li>
+            <li><a href="#" id="logout-drawer-link" style="display: none;">Logout</a></li>
+            <!-- Push Notification Settings in Drawer -->
+            <li id="notification-settings" style="display: none;">
+              <div class="notification-controls">
+                <h4>Notifications</h4>
+                <button id="toggle-notifications" class="notification-btn">
+                  <span id="notification-status">Enable</span>
+                </button>
+              </div>
+            </li>
           </ul>
         </nav>
 
