@@ -183,7 +183,6 @@ registerRoute(
 // Skip problematic requests
 registerRoute(
   ({ url }) =>
-    url.href.includes("maps.googleapis.com/maps/api/mapsjs/gen_204") ||
     url.href.includes("chrome-extension") ||
     url.href.includes("moz-extension"),
   new NetworkOnly(),

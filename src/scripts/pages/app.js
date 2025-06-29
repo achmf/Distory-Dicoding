@@ -42,12 +42,18 @@ class App {
   }
 
   async renderPage() {
+    console.log("📄 App.renderPage() called");
     const url = getActiveRoute();
+    console.log("🔗 Active route:", url);
     const page = routes[url]; // Get the page based on the active URL
+    console.log("📱 Page found:", page ? page.constructor.name : "null");
 
     // Clean up previous page if it exists and has a cleanup method
     if (this.#currentPage && typeof this.#currentPage.cleanup === "function") {
-      console.log("Cleaning up previous page:", this.#currentPage.constructor.name);
+      console.log(
+        "🧹 Cleaning up previous page:",
+        this.#currentPage.constructor.name
+      );
       this.#currentPage.cleanup();
     }
 
@@ -56,6 +62,7 @@ class App {
 
     if (page) {
       try {
+        console.log("🎬 Starting page render animation...");
         // Create a fade-out animation using the Animation API
         const fadeOutAnimation = this.#content.animate(
           [
@@ -69,7 +76,13 @@ class App {
         );
         await fadeOutAnimation.finished; // Wait until fade-out is complete
 
-        this.#content.innerHTML = await page.render();
+        console.log("🖼️ Calling page.render()...");
+        const content = await page.render();
+        console.log(
+          "📝 Page content rendered:",
+          content ? content.substring(0, 100) + "..." : "empty"
+        );
+        this.#content.innerHTML = content;
 
         // Create a fade-in animation using the Animation API
         const fadeInAnimation = this.#content.animate(
@@ -83,13 +96,17 @@ class App {
           }
         );
         await fadeInAnimation.finished; // Wait until fade-in is complete
+
+        console.log("🎭 Calling page.afterRender()...");
         await page.afterRender();
+        console.log("✅ Page render complete!");
       } catch (error) {
-        console.error("Error rendering page:", error);
+        console.error("❌ Error rendering page:", error);
         this.#content.innerHTML =
           '<div class="error-container"><h2>Error</h2><p>Failed to load the page. Please try again.</p></div>';
       }
     } else {
+      console.log("❌ No page found for route:", url);
       this.#content.innerHTML = '<div class="error-container"><h2>404</h2><p>Page Not Found</p></div>';
     }
   }

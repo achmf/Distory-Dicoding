@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "predeploy": "npm run build && vite build",
+    "check-pwa": "powershell -ExecutionPolicy Bypass -File ./check-pwa-assets.ps1",
+    "predeploy": "npm run build && npm run check-pwa",
     "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
@@ -16,8 +17,8 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "google-maps": "^4.3.3",
     "leaflet": "^1.9.4",
-    "sweetalert2": "^11.19.1"
+    "sweetalert2": "^11.19.1",
+    "workbox-window": "^7.3.0"
   }
 }

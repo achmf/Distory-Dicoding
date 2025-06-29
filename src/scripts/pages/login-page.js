@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import navigationManager from "../../utils/navigation-manager";
 
 export default class LoginPage {
   constructor() {
@@ -62,6 +63,9 @@ export default class LoginPage {
       }
 
       if (result.success) {
+        // Update navigation for authenticated user
+        navigationManager.onUserLogin();
+        
         // SweetAlert2 Success with Dark Mode
         Swal.fire({
           title: "Login Successful!",

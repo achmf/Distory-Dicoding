@@ -27,8 +27,12 @@ export function getActivePathname() {
 
 export function getActiveRoute() {
   const pathname = getActivePathname();
+  console.log("🔍 getActiveRoute - pathname:", pathname)
   const urlSegments = extractPathnameSegments(pathname);
-  return constructRouteFromSegments(urlSegments);
+  console.log("🔍 getActiveRoute - urlSegments:", urlSegments)
+  const route = constructRouteFromSegments(urlSegments);
+  console.log("🔍 getActiveRoute - constructed route:", route)
+  return route;
 }
 
 export function parseActivePathname() {

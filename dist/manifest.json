@@ -9,7 +9,11 @@
   "orientation": "portrait-primary",
   "background_color": "#121212",
   "theme_color": "#3f51b5",
-  "categories": ["social", "lifestyle", "entertainment"],
+  "categories": [
+    "social",
+    "lifestyle",
+    "entertainment"
+  ],
   "lang": "en",
   "dir": "ltr",
   "icons": [

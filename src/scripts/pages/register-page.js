@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import navigationManager from "../../utils/navigation-manager";
 
 export default class RegisterPage {
   constructor() {

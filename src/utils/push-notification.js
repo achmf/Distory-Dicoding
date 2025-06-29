@@ -269,6 +269,11 @@ const PushNotification = {
     }
   },
 
+  // Simplified subscribe method for easier access
+  async subscribe() {
+    return await this.requestPermissionAndSubscribe()
+  },
+
   // Unsubscribe from push notifications
   async unsubscribe() {
     if (!this.isSupported()) {

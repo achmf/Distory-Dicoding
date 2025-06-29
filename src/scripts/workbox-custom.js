@@ -2,6 +2,7 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching"
 import { registerRoute } from "workbox-routing"
 import { CacheFirst, NetworkFirst } from "workbox-strategies"
+import { ExpirationPlugin } from "workbox-expiration"
 
 // Clean up old caches
 cleanupOutdatedCaches()
@@ -20,8 +21,7 @@ self.addEventListener("fetch", (event) => {
     url.protocol === "moz-extension:" ||
     url.protocol === "safari-extension:" ||
     url.protocol === "ms-browser-extension:" ||
-    url.href.includes("gen_204") ||
-    url.href.includes("maps.googleapis.com/maps/api/mapsjs/gen_204")
+    url.href.includes("gen_204")
   ) {
     return // Let the browser handle these requests normally
   }
@@ -44,6 +44,37 @@ registerRoute(
           return request.url
         },
       },
+    ],
+  }),
+)
+
+// Cache Leaflet CSS and JS files
+registerRoute(
+  ({ url }) => 
+    url.origin === "https://unpkg.com" && 
+    url.pathname.includes("leaflet"),
+  new CacheFirst({
+    cacheName: "leaflet-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+      }),
+    ],
+  }),
+)
+
+// Cache OpenStreetMap tiles
+registerRoute(
+  ({ url }) => 
+    url.origin.includes("tile.openstreetmap.org"),
+  new CacheFirst({
+    cacheName: "map-tiles",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 200,
+        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+      }),
     ],
   }),
 )

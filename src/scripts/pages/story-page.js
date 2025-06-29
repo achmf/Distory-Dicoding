@@ -14,6 +14,7 @@ export default class StoryPage {
     this.isOfflineMode = !navigator.onLine;
     this.currentView = "all"; // 'all' or 'bookmarks'
     this.needsRefresh = false;
+    this.currentMap = null; // Track current map instance
   }
 
   setPresenter(presenter) {
@@ -544,6 +545,9 @@ export default class StoryPage {
     const bookmarkIcon = document.getElementById("bookmark-icon");
     const bookmarkText = document.getElementById("bookmark-text");
 
+    // Clean up any existing map before showing new story
+    this.cleanupMap();
+
     // Show loading state in modal
     modal.style.display = "block";
     document.getElementById("modal-title").textContent =
@@ -624,7 +628,7 @@ export default class StoryPage {
         )}, ${story.lon.toFixed(6)}`;
 
         // Show map if online, otherwise show unavailable message
-        if (navigator.onLine && typeof google !== "undefined" && google.maps) {
+        if (navigator.onLine && typeof L !== "undefined") {
           modalMap.style.display = "block";
           this.initMap(story.lat, story.lon);
         } else {
@@ -739,117 +743,60 @@ export default class StoryPage {
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
 
+    // Clean up the map instance
+    this.cleanupMap();
+
     // Clean up any event listeners
     document.removeEventListener("keydown", this.handleModalKeydown);
   }
 
+  cleanupMap() {
+    if (this.currentMap) {
+      try {
+        // Remove the map instance properly
+        this.currentMap.remove();
+        this.currentMap = null;
+      } catch (error) {
+        console.warn("Error cleaning up map:", error);
+        this.currentMap = null;
+      }
+    }
+  }
+
   initMap(lat, lng) {
     try {
-      // Check if Google Maps API is available
-      if (typeof google === "undefined" || !google.maps) {
-        console.error("Google Maps API not loaded");
+      // Check if Leaflet is available
+      if (typeof L === "undefined") {
+        console.error("Leaflet library not loaded");
         return;
       }
 
       const mapDiv = document.getElementById("modal-map");
+      
+      // Clean up any existing map instance first
+      this.cleanupMap();
+      
+      // Clear the map container content
+      mapDiv.innerHTML = '';
+      
+      // Remove any existing Leaflet classes that might interfere
+      mapDiv.className = 'modal-map-container';
+      
+      // Create a new Leaflet map instance
+      this.currentMap = L.map(mapDiv).setView([parseFloat(lat), parseFloat(lng)], 15);
 
-      // Create a new map instance
-      const map = new google.maps.Map(mapDiv, {
-        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        styles: [
-          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-          {
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#242f3e" }],
-          },
-          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-          {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [{ color: "#263c3f" }],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#6b9a76" }],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{ color: "#38414e" }],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#212a37" }],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#9ca5b3" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#746855" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#1f2835" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#f3d19c" }],
-          },
-          {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [{ color: "#2f3948" }],
-          },
-          {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [{ color: "#17263c" }],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#515c6d" }],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#17263c" }],
-          },
-        ],
-      });
+      // Add OpenStreetMap tiles (same as AddStoryPage)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(this.currentMap);
 
       // Add a marker to the map
-      new google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        map: map,
-        animation: google.maps.Animation.DROP,
-        title: "Story location",
-      });
+      L.marker([parseFloat(lat), parseFloat(lng)])
+        .addTo(this.currentMap)
+        .bindPopup('Story location')
+        .openPopup();
+        
     } catch (error) {
       console.error("Error initializing map:", error);
 

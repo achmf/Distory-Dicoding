@@ -212,6 +212,44 @@ header {
   transform: scale(1.1);
 }
 
+/* Navigation notification controls */
+.notification-controls {
+  padding: 14px 18px;
+  margin-top: 16px;
+  border-top: 1px solid var(--bg-tertiary);
+}
+
+.notification-controls h4 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.notification-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-btn:hover {
+  background-color: var(--accent-secondary);
+}
+
+.notification-btn.unsubscribe {
+  background-color: var(--danger);
+}
+
+.notification-btn.unsubscribe:hover {
+  background-color: #d63031;
+}
+
 /* Improved Navigation Bar (Visible on large screens) */
 .navigation-bar {
   display: none;
@@ -848,9 +886,35 @@ button:active {
   }
 }
 
-/* Custom Google Maps styling for dark mode */
-.gm-style {
-  filter: invert(90%) hue-rotate(180deg);
+/* Leaflet map styling for dark theme compatibility */
+.leaflet-container {
+  background-color: var(--bg-tertiary);
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.leaflet-popup-tip {
+  background-color: var(--bg-secondary);
+}
+
+.leaflet-control-layers,
+.leaflet-control-zoom {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--input-border);
+}
+
+.leaflet-control-layers a,
+.leaflet-control-zoom a {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.leaflet-control-layers a:hover,
+.leaflet-control-zoom a:hover {
+  background-color: var(--bg-tertiary);
 }
 
 /* HomePage specific container styling */
@@ -1260,4 +1324,117 @@ button:active {
 #modal-image {
   width: 100%;
   border-radius: 4px;
+}
+
+/* Navigation notification controls */
+.notification-controls {
+  padding: 14px 18px;
+  margin-top: 16px;
+  border-top: 1px solid var(--bg-tertiary);
+}
+
+.notification-controls h4 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.notification-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-btn:hover {
+  background-color: var(--accent-secondary);
+}
+
+.notification-btn.unsubscribe {
+  background-color: var(--danger);
+}
+
+.notification-btn.unsubscribe:hover {
+  background-color: #d63031;
+}
+
+/* Desktop Notification Toggle Button */
+.desktop-notification-toggle {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.notification-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.notification-toggle-btn:hover {
+  background-color: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.notification-toggle-btn.enabled {
+  background-color: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.notification-toggle-btn.enabled:hover {
+  background-color: var(--accent-secondary);
+}
+
+.notification-toggle-btn.disabled {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--input-border);
+}
+
+.notification-toggle-btn.disabled:hover {
+  background-color: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.notification-icon {
+  font-size: 1.1em;
+}
+
+.notification-text {
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .desktop-notification-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .notification-text {
+    display: none;
+  }
+  
+  .notification-toggle-btn {
+    padding: 8px 12px;
+  }
 }

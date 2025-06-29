@@ -581,20 +581,28 @@ export default class AddStoryPage {
     const coordinatesDisplay = document.getElementById("coordinates-display");
 
     if (mapContainer) {
-      const map = new google.maps.Map(mapContainer, {
-        center: { lat: -6.2, lng: 106.816666 }, // Default location (Jakarta)
-        zoom: 13,
-      });
+      // Initialize Leaflet map
+      const map = L.map(mapContainer).setView([-6.2, 106.816666], 13); // Default location (Jakarta)
 
-      const marker = new google.maps.Marker({
-        map: map,
-        title: "Click to select story location",
-      });
+      // Add OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map);
 
-      google.maps.event.addListener(map, "click", (event) => {
-        const lat = event.latLng.lat();
-        const lon = event.latLng.lng();
-        marker.setPosition(event.latLng);
+      // Create a marker
+      let marker = L.marker([-6.2, 106.816666]).addTo(map);
+
+      // Add click event listener to the map
+      map.on('click', (event) => {
+        const lat = event.latlng.lat;
+        const lon = event.latlng.lng;
+        
+        // Remove existing marker and add new one
+        map.removeLayer(marker);
+        marker = L.marker([lat, lon]).addTo(map);
+        
+        // Update form fields
         document.getElementById("lat").value = lat;
         document.getElementById("lon").value = lon;
 

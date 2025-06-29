@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) navigator.serviceWorker.register('/Distory-Dicoding/dev-sw.js?dev-sw', { scope: '/Distory-Dicoding/', type: 'classic' })

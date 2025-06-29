@@ -1,2 +1,3 @@
 APP_URL=http://localhost:5173/
-MAP_SERVICE_API_KEY=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g
+# Google Maps API key no longer needed - now using Leaflet with OpenStreetMap
+# MAP_SERVICE_API_KEY=AIzaSyAxiVVVSy0wy_ozcpaa2Lu5Nbksnz7rI7g

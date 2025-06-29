@@ -7,11 +7,12 @@ class PWAManager {
     this.updateAvailable = false
     this.init()
   }
-
   async init() {
     // Initialize Workbox
     if ("serviceWorker" in navigator) {
-      this.wb = new Workbox("/Distory-Dicoding/sw.js")
+      // Use the correct service worker path
+      const swPath = import.meta.env.DEV ? "/sw.js" : "/Distory-Dicoding/sw.js"
+      this.wb = new Workbox(swPath)
       this.setupWorkboxListeners()
       await this.registerServiceWorker()
     }
