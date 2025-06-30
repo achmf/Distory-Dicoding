@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Comprehensive Test</title>
+    <link rel="manifest" href="./manifest.json">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section { 
+            background: white; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status { 
+            font-weight: bold; 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin: 10px 0;
+        }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .cache-list { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 PWA Comprehensive Test</h1>
+    
+    <div class="test-section">
+        <h2>📱 PWA Installation Test</h2>
+        <div id="install-status"></div>
+        <button onclick="testInstallability()">Test Install Capability</button>
+        <button onclick="triggerInstall()" id="install-btn" style="display:none;">Install App</button>
+    </div>
+
+    <div class="test-section">
+        <h2>⚙️ Service Worker Test</h2>
+        <div id="sw-status"></div>
+        <button onclick="testServiceWorker()">Test Service Worker</button>
+        <button onclick="forceSwUpdate()">Force SW Update</button>
+    </div>
+
+    <div class="test-section">
+        <h2>💾 Cache Storage Test</h2>
+        <div id="cache-status"></div>
+        <button onclick="testCacheStorage()">Test Cache Storage</button>
+        <button onclick="clearAllCaches()">Clear All Caches</button>
+        <div id="cache-contents" class="cache-list"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔌 Offline Test</h2>
+        <div id="offline-status"></div>
+        <button onclick="testOfflineCapability()">Test Offline Mode</button>
+        <p><small>Note: To fully test offline capability, open DevTools → Network tab → Select "Offline" and refresh the page.</small></p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔔 Push Notification Test</h2>
+        <div id="notification-status"></div>
+        <button onclick="testNotificationSupport()">Test Notification Support</button>
+        <button onclick="testNotificationPermission()">Request Permission</button>
+        <button onclick="sendTestNotification()">Send Test Notification</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Manifest Test</h2>
+        <div id="manifest-status"></div>
+        <button onclick="testManifest()">Test Manifest</button>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        let swRegistration;
+
+        // PWA Install Test
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'block';
+            updateStatus('install-status', 'PWA is installable!', 'pass');
+        });
+
+        async function testInstallability() {
+            const status = document.getElementById('install-status');
+            
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                updateStatus('install-status', 'Browser supports PWA features', 'pass');
+            } else {
+                updateStatus('install-status', 'Browser has limited PWA support', 'warning');
+            }
+
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                updateStatus('install-status', 'App is already installed and running in standalone mode', 'pass');
+            }
+        }
+
+        async function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    updateStatus('install-status', 'App was installed successfully!', 'pass');
+                } else {
+                    updateStatus('install-status', 'User declined installation', 'warning');
+                }
+                deferredPrompt = null;
+            }
+        }
+
+        // Service Worker Test
+        async function testServiceWorker() {
+            const status = document.getElementById('sw-status');
+            
+            if ('serviceWorker' in navigator) {
+                try {
+                    swRegistration = await navigator.serviceWorker.register('./sw.js');
+                    const sw = await navigator.serviceWorker.ready;
+                    
+                    updateStatus('sw-status', `Service Worker registered successfully! State: ${sw.active?.state || 'unknown'}`, 'pass');
+                    
+                    // Check if SW is actually caching
+                    const caches = await window.caches.keys();
+                    if (caches.length > 0) {
+                        updateStatus('sw-status', `Service Worker is active and caching (${caches.length} cache(s) found)`, 'pass');
+                    }
+                    
+                } catch (error) {
+                    updateStatus('sw-status', `Service Worker registration failed: ${error.message}`, 'fail');
+                }
+            } else {
+                updateStatus('sw-status', 'Service Workers not supported', 'fail');
+            }
+        }
+
+        async function forceSwUpdate() {
+            if (swRegistration) {
+                await swRegistration.update();
+                updateStatus('sw-status', 'Service Worker update check completed', 'pass');
+            }
+        }
+
+        // Cache Storage Test
+        async function testCacheStorage() {
+            const status = document.getElementById('cache-status');
+            const contents = document.getElementById('cache-contents');
+            
+            try {
+                const cacheNames = await caches.keys();
+                if (cacheNames.length === 0) {
+                    updateStatus('cache-status', 'No caches found. Service Worker may not be caching properly.', 'warning');
+                    return;
+                }
+
+                updateStatus('cache-status', `Found ${cacheNames.length} cache(s)`, 'pass');
+                
+                let cacheInfo = '<h4>Cache Contents:</h4>';
+                for (const cacheName of cacheNames) {
+                    const cache = await caches.open(cacheName);
+                    const requests = await cache.keys();
+                    cacheInfo += `<strong>${cacheName}</strong> (${requests.length} items):<br>`;
+                    
+                    for (const request of requests.slice(0, 10)) { // Show first 10 items
+                        cacheInfo += `• ${request.url}<br>`;
+                    }
+                    if (requests.length > 10) {
+                        cacheInfo += `• ... and ${requests.length - 10} more items<br>`;
+                    }
+                    cacheInfo += '<br>';
+                }
+                contents.innerHTML = cacheInfo;
+                
+            } catch (error) {
+                updateStatus('cache-status', `Cache test failed: ${error.message}`, 'fail');
+            }
+        }
+
+        async function clearAllCaches() {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            updateStatus('cache-status', 'All caches cleared', 'warning');
+            document.getElementById('cache-contents').innerHTML = '';
+        }
+
+        // Offline Test
+        async function testOfflineCapability() {
+            const status = document.getElementById('offline-status');
+            
+            if (!navigator.onLine) {
+                updateStatus('offline-status', 'You are currently offline. If you can see this page, offline capability is working!', 'pass');
+                return;
+            }
+
+            // Test if offline.html exists
+            try {
+                const response = await fetch('./offline.html');
+                if (response.ok) {
+                    updateStatus('offline-status', 'Offline page exists and is accessible', 'pass');
+                } else {
+                    updateStatus('offline-status', 'Offline page not found', 'fail');
+                }
+            } catch (error) {
+                updateStatus('offline-status', 'Could not test offline page', 'warning');
+            }
+        }
+
+        // Notification Test
+        async function testNotificationSupport() {
+            const status = document.getElementById('notification-status');
+            
+            if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
+                updateStatus('notification-status', 'Push notifications are supported', 'pass');
+            } else {
+                updateStatus('notification-status', 'Push notifications not fully supported', 'fail');
+            }
+        }
+
+        async function testNotificationPermission() {
+            const status = document.getElementById('notification-status');
+            
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                updateStatus('notification-status', 'Notification permission granted', 'pass');
+            } else {
+                updateStatus('notification-status', 'Notification permission denied', 'fail');
+            }
+        }
+
+        async function sendTestNotification() {
+            if (Notification.permission === 'granted' && swRegistration) {
+                await swRegistration.showNotification('PWA Test', {
+                    body: 'This is a test notification from your PWA!',
+                    icon: './icon-192x192.png',
+                    badge: './icon-72x72.png'
+                });
+                updateStatus('notification-status', 'Test notification sent!', 'pass');
+            } else {
+                updateStatus('notification-status', 'Cannot send notification - permission needed', 'warning');
+            }
+        }
+
+        // Manifest Test
+        async function testManifest() {
+            const status = document.getElementById('manifest-status');
+            
+            try {
+                const response = await fetch('./manifest.json');
+                const manifest = await response.json();
+                
+                // Check required fields
+                const required = ['name', 'short_name', 'start_url', 'display', 'icons'];
+                const missing = required.filter(field => !manifest[field]);
+                
+                if (missing.length === 0) {
+                    updateStatus('manifest-status', 'Manifest is valid and contains all required fields', 'pass');
+                } else {
+                    updateStatus('manifest-status', `Manifest is missing: ${missing.join(', ')}`, 'fail');
+                }
+                
+                // Check icons
+                if (manifest.icons && manifest.icons.length > 0) {
+                    const iconSizes = manifest.icons.map(icon => icon.sizes);
+                    const hasRequiredIcons = iconSizes.includes('192x192') && iconSizes.includes('512x512');
+                    
+                    if (hasRequiredIcons) {
+                        document.getElementById('manifest-status').innerHTML += '<br>Required icons (192x192 and 512x512) are present';
+                    } else {
+                        document.getElementById('manifest-status').innerHTML += '<br><span class="warning">Missing required icon sizes (192x192 or 512x512)</span>';
+                    }
+                }
+                
+            } catch (error) {
+                updateStatus('manifest-status', `Manifest test failed: ${error.message}`, 'fail');
+            }
+        }
+
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            testInstallability();
+            testServiceWorker();
+            testCacheStorage();
+            testOfflineCapability();
+            testNotificationSupport();
+            testManifest();
+        });
+    </script>
+</body>
+</html>
