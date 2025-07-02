@@ -1,252 +1,323 @@
-// Service worker for PWA requirements with push notifications and caching
-const CACHE_NAME = 'distory-v2'; // Updated cache version
+// Service worker for PWA requirements with comprehensive caching
+const CACHE_NAME = 'distory-v2';  // Updated cache version
+const STATIC_CACHE = 'distory-static-v2';
+const DYNAMIC_CACHE = 'distory-dynamic-v2';
+const API_CACHE = 'distory-api-v2';
 
-// Determine the correct base path
-const BASE_PATH = self.location.pathname.includes('/Distory-Dicoding/') ? '/Distory-Dicoding/' : '/';
-
-console.log('Service Worker: Base path determined as:', BASE_PATH);
-console.log('Service Worker: Location pathname:', self.location.pathname);
-
-// Only cache essential files that we know exist
-const essentialFiles = [
-  'manifest.json',
-  'offline.html'
+// Comprehensive assets to cache during install
+const STATIC_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './offline.html',
+  // Main application files (will be added dynamically by build)
+  // Icons
+  './icon-72x72.png',
+  './icon-96x96.png',
+  './icon-128x128.png',
+  './icon-144x144.png',
+  './icon-152x152.png',
+  './icon-192x192.png',
+  './icon-384x384.png',
+  './icon-512x512.png',
+  './favicon.png'
 ];
 
-// Icons that should exist
-const iconFiles = [
-  'icon-72x72.png',
-  'icon-96x96.png', 
-  'icon-128x128.png',
-  'icon-144x144.png',
-  'icon-152x152.png',
-  'icon-192x192.png',
-  'icon-384x384.png',
-  'icon-512x512.png'
+// Important URLs to cache for offline functionality
+const IMPORTANT_URLS = [
+  './',
+  './#/',
+  './#/story',
+  './#/add-story',
+  './#/login',
+  './#/register'
 ];
 
-// Build URLs to cache with BASE_PATH
-const urlsToCache = [
-  BASE_PATH, // Root path
-  ...essentialFiles.map(file => BASE_PATH + file),
-  ...iconFiles.map(file => BASE_PATH + file)
-];
-
-console.log('Service Worker: URLs to cache:', urlsToCache);
-
-// Install event - cache important resources with error handling
+// Install event - cache static assets comprehensively
 self.addEventListener('install', (event) => {
-  console.log('Service worker installed');
+  console.log('Service worker installing...');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(async (cache) => {
-        console.log('Opened cache, attempting to cache resources...');
-        
-        const cachePromises = urlsToCache.map(async (url) => {
-          try {
-            console.log('Attempting to cache:', url);
-            const response = await fetch(url);
-            if (response.ok) {
-              await cache.put(url, response);
-              console.log('Successfully cached:', url);
-              return { url, success: true };
-            } else {
-              console.warn(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
-              return { url, success: false, error: `${response.status} ${response.statusText}` };
-            }
-          } catch (error) {
-            console.warn(`Failed to cache ${url}:`, error.message);
-            return { url, success: false, error: error.message };
-          }
-        });
-        
-        const results = await Promise.all(cachePromises);
-        const successful = results.filter(result => result.success).length;
-        const failed = results.filter(result => !result.success).length;
-        
-        console.log(`Cache installation completed: ${successful} successful, ${failed} failed`);
-        if (failed > 0) {
-          const failedUrls = results.filter(result => !result.success).map(result => result.url);
-          console.log('Failed URLs:', failedUrls);
-        }
-        
-        return results;
-      })
-      .catch(error => {
-        console.error('Cache installation failed completely:', error);
-        // Don't fail the service worker installation just because caching failed
-        return [];
-      })
+    Promise.all([
+      // Cache static assets
+      caches.open(STATIC_CACHE)
+        .then((cache) => {
+          console.log('Caching static assets');
+          return cache.addAll(STATIC_ASSETS);
+        }),
+      // Cache important URLs
+      caches.open(DYNAMIC_CACHE)
+        .then((cache) => {
+          console.log('Pre-caching important URLs');
+          return Promise.allSettled(
+            IMPORTANT_URLS.map(url => 
+              fetch(url).then(response => {
+                if (response.ok) {
+                  return cache.put(url, response);
+                }
+              }).catch(error => {
+                console.log(`Failed to pre-cache ${url}:`, error);
+              })
+            )
+          );
+        })
+    ])
+    .then(() => {
+      console.log('Service worker installed successfully');
+      self.skipWaiting();
+    })
+    .catch((error) => {
+      console.error('Error during service worker install:', error);
+    })
   );
-  self.skipWaiting();
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service worker activated');
+  console.log('Service worker activating...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE && cacheName !== API_CACHE) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('Service worker activated');
+        self.clients.claim();
+      })
   );
-  self.clients.claim();
 });
 
-// Fetch event - serve from cache when offline with better error handling
+// Fetch event - enhanced caching strategy
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip cross-origin requests that aren't API calls
+  if (url.origin !== location.origin && !url.pathname.includes('/v1/')) {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version if available
-        if (response) {
-          console.log('Serving from cache:', event.request.url);
+  // Handle API requests with network-first strategy and better caching
+  if (url.pathname.includes('/api/') || url.pathname.includes('/v1/') || url.pathname.includes('/stories')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Only cache successful responses
+          if (response.ok) {
+            const responseClone = response.clone();
+            caches.open(API_CACHE)
+              .then((cache) => {
+                cache.put(request, responseClone);
+              });
+          }
           return response;
+        })
+        .catch(() => {
+          // If network fails, try cache
+          return caches.match(request)
+            .then((cachedResponse) => {
+              if (cachedResponse) {
+                console.log('Serving API response from cache:', request.url);
+                return cachedResponse;
+              }
+              // If no cached response and it's a navigation request, return offline page
+              if (request.mode === 'navigate') {
+                return caches.match('./offline.html');
+              }
+              // For other requests, throw error to be handled by the calling code
+              throw new Error('No cached response available');
+            });
+        })
+    );
+    return;
+  }
+
+  // Handle static assets and navigation with cache-first strategy
+  event.respondWith(
+    caches.match(request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          console.log('Serving from cache:', request.url);
+          return cachedResponse;
         }
         
-        // Try to fetch from network
-        return fetch(event.request)
-          .then((networkResponse) => {
-            // Cache successful responses for future use (optional)
-            if (networkResponse.ok && event.request.url.startsWith(self.location.origin)) {
-              const responseClone = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseClone).catch(error => {
-                  console.warn('Failed to cache response:', error);
-                });
+        // Not in cache, fetch from network
+        return fetch(request)
+          .then((response) => {
+            // Don't cache if it's not a successful response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Determine which cache to use
+            const cacheToUse = request.destination === 'document' || 
+                             request.url.includes('.html') ||
+                             request.url.includes('.css') ||
+                             request.url.includes('.js') ||
+                             request.url.includes('.png') ||
+                             request.url.includes('.jpg') ||
+                             request.url.includes('.ico') ? STATIC_CACHE : DYNAMIC_CACHE;
+
+            // Clone the response before caching
+            const responseToCache = response.clone();
+            caches.open(cacheToUse)
+              .then((cache) => {
+                console.log(`Caching to ${cacheToUse}:`, request.url);
+                cache.put(request, responseToCache);
               });
-            }
-            return networkResponse;
+
+            return response;
           })
-          .catch((error) => {
-            console.warn('Network request failed:', event.request.url, error);
-            
-            // If network fails and no cache, show offline page for navigation requests
-            if (event.request.destination === 'document') {
-              return caches.match(BASE_PATH + 'offline.html') || 
-                     caches.match('/offline.html') ||
-                     new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+          .catch(() => {
+            console.log('Network failed for:', request.url);
+            // If network fails and it's a navigation request, show offline page
+            if (request.mode === 'navigate') {
+              return caches.match('./offline.html');
             }
-            
-            // For other resources, return a generic error
-            return new Response('Resource not available offline', { 
-              status: 503, 
-              statusText: 'Service Unavailable' 
-            });
+            // For other resources, try to find any cached version
+            return caches.match(request);
           });
-      })
-      .catch(error => {
-        console.error('Cache match failed:', error);
-        return fetch(event.request).catch(() => {
-          return new Response('Error', { status: 500, statusText: 'Internal Server Error' });
-        });
       })
   );
 });
 
-// Push event - handle push notifications from server
+// Handle push events for notifications - enhanced version
 self.addEventListener('push', (event) => {
-  console.log('Service worker received push event:', event);
+  console.log('Push event received:', event);
   
   let notificationData = {
-    title: 'Distory',
-    body: 'You have a new notification',
+    title: 'Distory - New Story Available!',
+    body: 'A new story has been published. Click to read it!',
     icon: './icon-192x192.png',
-    badge: './icon-72x72.png'
+    badge: './icon-96x96.png',
+    data: {
+      url: './#/story'  // Default to story page
+    }
   };
 
-  // Try to parse push data
+  // Parse push data if available
   if (event.data) {
     try {
-      const pushData = event.data.json();
-      console.log('Push data received:', pushData);
+      const data = event.data.json();
+      console.log('Push notification data received:', data);
       
-      if (pushData.title) {
-        notificationData.title = pushData.title;
-      }
-      
-      if (pushData.options) {
-        notificationData.body = pushData.options.body || notificationData.body;
-        notificationData.icon = pushData.options.icon || notificationData.icon;
-        notificationData.badge = pushData.options.badge || notificationData.badge;
-      }
+      notificationData = {
+        title: data.title || notificationData.title,
+        body: data.body || notificationData.body,
+        icon: data.icon || notificationData.icon,
+        badge: data.badge || notificationData.badge,
+        data: {
+          // Ensure the URL is relative and points to our site
+          url: data.url && data.url.startsWith('./') ? data.url : 
+               data.url && data.url.startsWith('#') ? './' + data.url :
+               './#/story'  // Default fallback
+        }
+      };
     } catch (error) {
       console.error('Error parsing push data:', error);
     }
   }
 
-  const showNotification = self.registration.showNotification(notificationData.title, {
-    body: notificationData.body,
-    icon: notificationData.icon,
-    badge: notificationData.badge,
-    tag: 'distory-notification',
-    requireInteraction: true,
-    vibrate: [100, 50, 100],
-    actions: [
-      {
-        action: 'open',
-        title: 'Open App'
-      },
-      {
-        action: 'close',
-        title: 'Close'
-      }
-    ]
-  });
+  console.log('Showing notification:', notificationData.title);
+  console.log('Notification will open URL:', notificationData.data.url);
 
-  event.waitUntil(showNotification);
+  const promiseChain = self.registration.showNotification(
+    notificationData.title,
+    {
+      body: notificationData.body,
+      icon: notificationData.icon,
+      badge: notificationData.badge,
+      data: notificationData.data,
+      requireInteraction: true,
+      vibrate: [200, 100, 200],  // Add vibration for mobile devices
+      tag: 'distory-notification',  // Prevent duplicate notifications
+      actions: [
+        {
+          action: 'view',
+          title: 'View Story',
+          icon: './icon-96x96.png'
+        },
+        {
+          action: 'close',
+          title: 'Close'
+        }
+      ]
+    }
+  );
+
+  event.waitUntil(promiseChain);
 });
 
-// Notification click event - handle notification clicks
+// Handle notification clicks - enhanced version
 self.addEventListener('notificationclick', (event) => {
   console.log('Notification clicked:', event);
-  event.notification.close();
   
-  if (event.action === 'open' || !event.action) {
-    event.waitUntil(
-      clients.matchAll({ type: 'window' }).then((clientList) => {
-        // Check if there's an existing window/tab open
+  event.notification.close();
+
+  if (event.action === 'close') {
+    console.log('User chose to close notification');
+    return;
+  }
+
+  // Get the URL to open (default action or 'view' action)
+  let urlToOpen = event.notification.data?.url || './#/story';
+  
+  // Ensure the URL is always relative to our site origin
+  if (urlToOpen.startsWith('http')) {
+    // If it's an absolute URL from another domain, redirect to our story page
+    const targetUrl = new URL(urlToOpen);
+    if (targetUrl.origin !== self.location.origin) {
+      console.log('External URL detected, redirecting to our story page');
+      urlToOpen = './#/story';
+    }
+  } else if (!urlToOpen.startsWith('./') && !urlToOpen.startsWith('#')) {
+    // Ensure relative URLs start with ./ 
+    urlToOpen = './' + urlToOpen;
+  }
+  
+  // Convert to absolute URL using our origin
+  const finalUrl = new URL(urlToOpen, self.location.origin).href;
+  
+  console.log('Opening URL:', finalUrl);
+  console.log('Current origin:', self.location.origin);
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        console.log('Found', clientList.length, 'client windows');
+        
+        // Check if there's already a window/tab open from our origin
         for (const client of clientList) {
-          if (client.url.includes(self.location.origin) && 'focus' in client) {
-            return client.focus();
+          const clientUrl = new URL(client.url);
+          const targetUrl = new URL(finalUrl);
+          
+          console.log('Checking client:', clientUrl.href);
+          
+          if (clientUrl.origin === targetUrl.origin && 'focus' in client) {
+            console.log('Focusing existing window and navigating to:', finalUrl);
+            client.focus();
+            // Navigate to the specific URL if it's different
+            if (client.url !== finalUrl) {
+              client.navigate(finalUrl);
+            }
+            return client;
           }
         }
-        // If no existing window, open a new one
+        
+        // If no existing window/tab from our origin, open a new one
+        console.log('Opening new window for:', finalUrl);
         if (clients.openWindow) {
-          return clients.openWindow('./');
+          return clients.openWindow(finalUrl);
         }
       })
-    );
-  }
-});
-
-// Message event - handle messages from the main thread (for testing)
-self.addEventListener('message', (event) => {
-  console.log('Service worker received message:', event.data);
-  
-  if (event.data && event.data.type === 'test-notification') {
-    const { title, options } = event.data.data;
-    
-    const showNotification = self.registration.showNotification(title, {
-      body: options.body || 'Test notification from service worker',
-      icon: options.icon || './icon-192x192.png',
-      badge: options.badge || './icon-72x72.png',
-      tag: 'test-notification',
-      requireInteraction: false,
-      vibrate: [100, 50, 100]
-    });
-    
-    event.waitUntil(showNotification);
-  }
+      .catch((error) => {
+        console.error('Error handling notification click:', error);
+      })
+  );
 });
